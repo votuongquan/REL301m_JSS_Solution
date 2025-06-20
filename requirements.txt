@@ -1,0 +1,8 @@
+JSSEnv == 1.1.0
+numpy == 2.2.6
+pandas == 2.3.0
+plotly == 6.1.2
+gym == 0.26.2
+gymnasium == 0.28.1
+matplotlib == 3.10.3
+seaborn == 0.13.2
