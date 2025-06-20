@@ -93,7 +93,7 @@ This will:
 ## 📁 Project Structure
 
 ```
-JSSenv/
+REL301_JSS_Solution/
 ├── main.py                    # Main execution script
 ├── agents.py                  # Custom agent implementations
 ├── comparison_framework.py    # Comparison infrastructure
