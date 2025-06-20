@@ -14,6 +14,9 @@ warnings.filterwarnings('ignore', category=DeprecationWarning)
 def main():
     """Main comparison function"""
     # Configuration
+    # check ì reults folder
+    if not os.path.exists("results"):
+        os.makedirs("results")
     instance_name = "ta34"
     instance_path = "instances/" + instance_name 
     num_episodes = 30  # Increase for more robust results
