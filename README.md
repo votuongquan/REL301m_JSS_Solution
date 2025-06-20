@@ -97,13 +97,14 @@ REL301_JSS_Solution/
 ├── main.py                    # Main execution script
 ├── agents.py                  # Custom agent implementations
 ├── comparison_framework.py    # Comparison infrastructure
+├── advanced_visualizer.py     # Advanced visualization implementations
 ├── instances/                 # JSS problem instances
 │   ├── ta01
 │   ├── dmu19
 │   └── ...
 ├── requirements.txt           # Python dependencies
 ├── README.md                  # This file
-└── .gitignore                # Git ignore rules
+└── .gitignore                 # Git ignore rules
 ```
 
 ## 🔧 Configuration
