@@ -24,3 +24,6 @@ wheels/
 *.png 
 *.jpg
 *.jpeg
+
+# Results and output files
+results/
