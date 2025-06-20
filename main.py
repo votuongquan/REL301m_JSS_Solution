@@ -4,15 +4,27 @@ Advanced Job Shop Scheduling Comparison
 
 from comparison_framework import JSSComparisonFramework
 from agents import create_agent
+import time
+import os
+import warnings
+
+warnings.filterwarnings('ignore', category=DeprecationWarning)
 
 
 def main():
     """Main comparison function"""
     # Configuration
-    instance_path = "instances/ta01" 
+    instance_name = "ta34"
+    instance_path = "instances/" + instance_name 
     num_episodes = 30  # Increase for more robust results
     
-    print("🚀 Starting Advanced JSS Comparison")
+    result_path = "results/" + instance_name + time.strftime("_%Y%m%d_%H%M%S") + "/"
+    
+    # Create result directory if it doesn't exist
+    if not os.path.exists(result_path):
+        os.makedirs(result_path)
+    
+    print("Starting Advanced JSS Comparison")
     print(f"Instance: {instance_path}")
     print(f"Episodes per method: {num_episodes}")
     
@@ -47,23 +59,21 @@ def main():
     print(f"\n🏁 Running comprehensive comparison...")
     
     try:
-        results_df = framework.run_comprehensive_comparison(agents, num_episodes)
-        
+        results_df = framework.run_comprehensive_comparison(agents, num_episodes)        
         # # Display results
         # print("\n📊 COMPARISON RESULTS:")
         # print("="*80)
         # print(results_df.to_string(index=False, float_format='%.2f'))
         
-        # # Print detailed summary
-        # framework.print_summary()
+        # Print detailed summary
+        framework.print_summary()
         
         # Create visualizations
-        # print("\n📈 Creating visualizations...")
-        # framework.create_visualizations("jss_comparison_plots.png")
+        print("\n✨ Creating visualizations...")
+        framework.create_enhanced_visualizations(result_path)
         
-        # # Save detailed results
-        # print("💾 Saving detailed results...")
-        # framework.save_results("detailed_results.csv")
+        # Save detailed results
+        framework.save_results(result_path + "detailed_results.csv")
         
         # Performance analysis
         print("\n🎯 PERFORMANCE ANALYSIS:")

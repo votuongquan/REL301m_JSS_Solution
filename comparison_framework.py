@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 from agents import BaseJSSAgent, create_agent
+from advanced_visualizer import AdvancedJSSVisualizer
 
 
 class JSSPerformanceMetrics:
@@ -237,58 +238,7 @@ class JSSComparisonFramework:
         
         df = pd.DataFrame(detailed_data)
         df.to_csv(filename, index=False)
-        print(f"Results saved to {filename}")
-    
-    def create_visualizations(self, save_path: str = None):
-        """Create comparison visualizations"""
-        if not self.results:
-            print("No results to plot.")
-            return
-        
-        fig, axes = plt.subplots(2, 2, figsize=(15, 12))
-        fig.suptitle('JSS Methods Comparison', fontsize=16)
-        
-        methods = list(self.results.keys())
-        avg_makespans = [self.results[method]['avg_makespan'] for method in methods]
-        std_makespans = [self.results[method]['std_makespan'] for method in methods]
-        avg_rewards = [self.results[method]['avg_reward'] for method in methods]
-        avg_times = [self.results[method]['avg_execution_time'] for method in methods]
-        
-        # Makespan comparison
-        axes[0, 0].bar(methods, avg_makespans, yerr=std_makespans, capsize=5)
-        axes[0, 0].set_title('Average Makespan (Lower is Better)')
-        axes[0, 0].set_ylabel('Makespan')
-        axes[0, 0].tick_params(axis='x', rotation=45)
-        
-        # Reward comparison
-        axes[0, 1].bar(methods, avg_rewards)
-        axes[0, 1].set_title('Average Reward (Higher is Better)')
-        axes[0, 1].set_ylabel('Reward')
-        axes[0, 1].tick_params(axis='x', rotation=45)
-        
-        # Execution time
-        axes[1, 0].bar(methods, avg_times)
-        axes[1, 0].set_title('Average Execution Time')
-        axes[1, 0].set_ylabel('Time (seconds)')
-        axes[1, 0].tick_params(axis='x', rotation=45)
-        
-        # Distribution
-        makespan_data = []
-        makespan_labels = []
-        for method in methods:
-            makespan_data.extend(self.results[method]['all_makespans'])
-            makespan_labels.extend([method] * len(self.results[method]['all_makespans']))
-        
-        df_box = pd.DataFrame({'Method': makespan_labels, 'Makespan': makespan_data})
-        sns.boxplot(data=df_box, x='Method', y='Makespan', ax=axes[1, 1])
-        axes[1, 1].set_title('Makespan Distribution')
-        axes[1, 1].tick_params(axis='x', rotation=45)
-        
-        plt.tight_layout()
-        
-        if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches='tight')
-            print(f"Visualizations saved to {save_path}")
+        print(f"💾 Results saved to {filename}")
     
     def print_summary(self):
         """Print comparison summary"""
@@ -312,5 +262,81 @@ class JSSComparisonFramework:
         best_method = sorted_methods[0][0]
         best_makespan = sorted_methods[0][1]['avg_makespan']
         
-        print(f"\n🏆 Best performing method: {best_method}")
-        print(f"📊 Best average makespan: {best_makespan:.2f}")
+        print(f"\nBest performing method: {best_method}")
+        print(f"Best average makespan: {best_makespan:.2f}")
+    
+    def create_enhanced_visualizations(self, save_dir: str = "results"):
+        """Create enhanced visualizations using the new visualizer"""
+        if not self.results:
+            print("No results to visualize.")
+            return
+        
+        # Create results directory
+        Path(save_dir).mkdir(exist_ok=True)
+        
+        # Initialize the advanced visualizer
+        visualizer = AdvancedJSSVisualizer(self.results, self.instance_path)
+        
+        # Create comprehensive dashboard
+        dashboard_path = Path(save_dir) / "comprehensive_dashboard.png"
+        visualizer.create_comprehensive_dashboard(str(dashboard_path))
+        
+        # Create detailed comparison
+        detailed_path = Path(save_dir) / "detailed_comparison.png"
+        visualizer.create_detailed_comparison(str(detailed_path))
+        
+        # Generate performance report
+        self._generate_performance_report(save_dir)
+            
+    def _generate_performance_report(self, save_dir: str):
+        """Generate a comprehensive performance report - FIXED UNICODE"""
+        report_path = Path(save_dir) / "performance_report.txt"
+        
+        # Open file with UTF-8 encoding to support Unicode characters
+        with open(report_path, 'w', encoding='utf-8') as f:
+            f.write("="*60 + "\n")
+            f.write("JOB SHOP SCHEDULING PERFORMANCE REPORT\n")
+            f.write("="*60 + "\n\n")
+            
+            f.write(f"Instance: {self.instance_path}\n")
+            f.write(f"Total Methods Compared: {len(self.results)}\n\n")
+            
+            # Performance ranking
+            f.write("PERFORMANCE RANKING:\n")
+            f.write("-" * 30 + "\n")
+            
+            sorted_methods = sorted(self.results.items(), 
+                                  key=lambda x: x[1]['avg_makespan'])
+            
+            for i, (method, stats) in enumerate(sorted_methods, 1):
+                f.write(f"{i:2d}. {method:<20} Avg: {stats['avg_makespan']:6.1f} "
+                       f"(±{stats['std_makespan']:5.1f})\n")
+            
+            # Best performers analysis - Remove emoji characters
+            f.write("\n\nBEST PERFORMERS ANALYSIS:\n")
+            f.write("-" * 30 + "\n")
+            
+            best_method, best_stats = sorted_methods[0]
+            f.write(f"CHAMPION: {best_method}\n")  # Removed emoji
+            f.write(f"   Average Makespan: {best_stats['avg_makespan']:.1f}\n")
+            f.write(f"   Standard Deviation: {best_stats['std_makespan']:.1f}\n")
+            f.write(f"   Best Single Result: {best_stats['min_makespan']:.1f}\n")
+            f.write(f"   Consistency Score: {best_stats['std_makespan']/best_stats['avg_makespan']*100:.1f}%\n")
+            
+            # Custom agents analysis
+            custom_agents = [m for m in self.results.keys() 
+                           if m.startswith(('Hybrid', 'Adaptive'))]
+            
+            if custom_agents:
+                f.write("\n\nCUSTOM AGENTS PERFORMANCE:\n")
+                f.write("-" * 30 + "\n")
+                
+                for agent in custom_agents:
+                    stats = self.results[agent]
+                    rank = [i for i, (m, _) in enumerate(sorted_methods, 1) if m == agent][0]
+                    f.write(f"{agent}:\n")
+                    f.write(f"   Rank: #{rank} out of {len(self.results)}\n")
+                    f.write(f"   Performance: {stats['avg_makespan']:.1f} ± {stats['std_makespan']:.1f}\n")
+                    f.write(f"   Best Result: {stats['min_makespan']:.1f}\n\n")
+        
+        print(f"📝 Performance report saved to {report_path}")
