@@ -1,210 +1,242 @@
-# Advanced Job Shop Scheduling (JSS) Comparison Framework
+# Job Shop Scheduling (JSS) Solution Framework
 
-A comprehensive framework for comparing custom agents against traditional dispatching rules in Job Shop Scheduling problems using the JSSEnv environment.
+## 🎯 Overview
 
-## 🎯 Project Overview
+This repository contains an advanced **Job Shop Scheduling (JSS)** solution framework that implements custom intelligent agents and provides comprehensive comparison tools for JSS optimization. The framework supports both classical dispatching rules and modern AI-based scheduling approaches with human resource constraints.
 
-This project implements and compares advanced Job Shop Scheduling agents with traditional dispatching rules. It features:
+## ✨ Key Features
 
-- **Custom Intelligent Agents**: Hybrid priority scoring and adaptive lookahead agents
-- **Comprehensive Comparison**: Against 7+ dispatching rules (SPT, FIFO, MWR, LWR, MOR, LOR, CR)
-- **Advanced Heuristics**: Multi-factor decision making with dynamic weighting
-- **Performance Analytics**: Detailed metrics, visualizations, and statistical analysis
+### 🤖 Custom Intelligent Agents
+- **HybridPriorityScoringAgent**: Advanced agent combining multiple heuristics with dynamic weighting
+- **AdaptiveLookAheadAgent**: Agent with limited lookahead for better decision making
+- **ControllerJSSAgent**: Agent that respects people-machine assignment constraints
 
-## 🚀 Features
+### 📊 Comprehensive Analysis Tools
+- Performance comparison framework across multiple scheduling methods
+- Advanced visualization dashboard with interactive charts
+- Statistical analysis and performance metrics
+- Gantt chart generation for schedule visualization
 
-### Custom Agents
-- **HybridPriorityScoringAgent**: Combines multiple heuristics with dynamic weighting
-  - Shortest Processing Time (SPT) scoring
-  - Work remaining analysis
-  - Critical path considerations
-  - Machine utilization optimization
-  - Bottleneck detection
-  - Flow continuity analysis
-  
-- **AdaptiveLookAheadAgent**: Limited lookahead for better decision making
+### 🔧 Flexible Architecture
+- Support for standard JSS benchmark instances (TA, DMU series)
+- Integration with JSSEnv gymnasium environment
+- Configurable controller constraints for realistic workforce modeling
+- Modular design for easy extension and customization
 
-### Analysis Tools
-- Performance comparison across multiple episodes
-- Statistical analysis (mean, std, min, max makespans)
-- Visualization generation (bar charts, box plots)
-- Detailed results export to CSV
-- Progress tracking and execution time monitoring
+## 🏗️ Project Structure
 
-## 📋 Requirements
-
-- Python 3.8+
-- JSSEnv
-- Gymnasium
-- NumPy
-- Pandas
-- Matplotlib
-- Seaborn
-
-## 🛠️ Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/votuongquan/REL301m_JSS_Solution.git
-cd REL301m_JSS_Solution
+```
+REL301m_JSS_Solution/
+├── main.py                      # Controller-constrained JSS execution
+├── requirements.txt             # Dependencies
+├── comparison_framework/        # Core comparison and agent modules
+│   ├── compare.py               # Main comparison script
+│   ├── comparison_framework.py  # Comparison framework implementation
+│   ├── agents.py                # Custom JSS agents
+│   └── advanced_visualizer.py   # Visualization tools
+├── instances/                   # JSS problem instances
+│   ├── dmu16, dmu17, ...        # DMU benchmark instances
+│   └── ta01, ta02, ...          # Taillard benchmark instances
+├── controllers/                 # People-machine assignment constraints
+│   ├── 10p_20m.txt              # 10 people, 20 machines
+│   ├── 15p_15m.txt              # 15 people, 15 machines
+│   ├── 20p_20m.txt              # 20 people, 20 machines
+│   └── ...                      # Add more controller files for testing
+└── results/                     # Output directory for results
 ```
 
-2. Install dependencies:
+## 🚀 Quick Start
+
+### Prerequisites
+
+Install required dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Ensure you have JSS problem instances in the `instances/` directory
-
-## 🏃‍♂️ Quick Start
-
 ### Basic Usage
 
-```python
-from comparison_framework import JSSComparisonFramework
-from agents import create_agent
+#### 1. Run Agent Comparison
 
-# Initialize framework
-framework = JSSComparisonFramework("instances/ta01")
-
-# Create agents
-agents = [
-    create_agent("hybrid"),
-    create_agent("lookahead")
-]
-
-# Run comparison
-results = framework.run_comprehensive_comparison(agents, num_episodes=20)
-```
-
-### Running the Full Comparison
+Compare custom agents against classical dispatching rules:
 
 ```bash
-python main.py
+cd comparison_framework
+python compare.py --instance dmu16 --episodes 30
 ```
 
-This will:
-1. Test environment setup
-2. Run custom agents vs dispatching rules
-3. Generate performance visualizations
-4. Save detailed results to CSV
-5. Display comprehensive analysis
+**Parameters:**
+- `--instance`: Instance name (e.g., dmu16, ta01)
+- `--episodes`: Number of episodes per method (default: 30)
 
-## 📁 Project Structure
+#### 2. Run Controller-Constrained Scheduling
 
+Execute JSS with people-machine assignment constraints:
+
+```bash
+python main.py --instance dmu19 --controller 20p_20m --num_people 20
 ```
-REL301_JSS_Solution/
-├── main.py                    # Main execution script
-├── agents.py                  # Custom agent implementations
-├── comparison_framework.py    # Comparison infrastructure
-├── advanced_visualizer.py     # Advanced visualization implementations
-├── instances/                 # JSS problem instances
-│   ├── ta01
-│   ├── dmu19
-│   └── ...
-├── requirements.txt           # Python dependencies
-├── README.md                  # This file
-└── .gitignore                 # Git ignore rules
-```
+
+**Parameters:**
+- `--instance`: JSS instance name
+- `--controller`: Controller configuration file
+- `--num_people`: Number of available people
+
+## 📋 Detailed Usage
+
+### Agent Comparison Framework
+
+The comparison framework evaluates multiple scheduling approaches:
+
+**Classical Dispatching Rules:**
+- SPT (Shortest Processing Time)
+- FIFO (First In, First Out)
+- MWR (Most Work Remaining)
+- LWR (Least Work Remaining)
+- MOR (Most Operations Remaining)
+- LOR (Least Operations Remaining)
+- CR (Critical Ratio)
+
+**Custom Intelligent Agents:**
+- **HybridPriorityScoringAgent**: Combines multiple heuristics with dynamic weights
+- **AdaptiveLookAheadAgent**: Uses limited lookahead for better decisions
+
+### Controller-Constrained Scheduling
+
+The main script supports realistic scheduling scenarios where:
+- People have specific machine qualifications
+- Resource availability constraints apply
+- Gantt charts visualize the final schedule
+
+### Output Analysis
+
+The framework generates comprehensive results:
+
+1. **Performance Metrics**
+   - Average makespan and standard deviation
+   - Best and worst case performance
+   - Execution time statistics
+
+2. **Visualizations**
+   - Comprehensive performance dashboard
+   - Detailed comparison charts
+   - Gantt charts for schedule visualization
+
+3. **Reports**
+   - Performance ranking summary
+   - Statistical analysis
+   - CSV files with detailed episode results
+
+## 🧠 Agent Algorithms
+
+### HybridPriorityScoringAgent
+
+This agent implements a sophisticated scoring system that combines:
+
+- **Shortest Processing Time (SPT)**: Prioritizes jobs with shorter processing times
+- **Work Remaining**: Considers remaining workload for each job
+- **Critical Path**: Evaluates path criticality in the schedule
+- **Machine Utilization**: Accounts for machine availability
+- **Bottleneck Detection**: Identifies and prioritizes bottleneck resources
+- **Flow Continuity**: Ensures smooth job flow between operations
+
+The agent uses **dynamic weight adjustment** based on scheduling progress:
+- Early stage (0-30%): Focus on critical path and work remaining
+- Middle stage (30-70%): Balanced approach across all factors
+- Late stage (70-100%): Emphasis on SPT and machine utilization
+
+### AdaptiveLookAheadAgent
+
+This agent evaluates scheduling decisions by:
+- Performing limited lookahead simulation
+- Considering immediate and future benefits
+- Evaluating machine availability for next operations
+- Making informed decisions based on projected outcomes
+
+### ControllerJSSAgent
+
+Specialized for real-world constraints:
+- Respects people-machine qualification matrices
+- Tracks person availability and assignments
+- Optimizes considering both job priorities and resource constraints
+- Generates detailed scheduling information with person assignments
+
+## 📊 Performance Analysis
+
+### Metrics Collected
+
+- **Makespan**: Total completion time
+- **Reward**: Environment-specific performance measure
+- **Execution Time**: Algorithm runtime
+- **Consistency**: Standard deviation of results
+
+### Statistical Analysis
+
+The framework provides:
+- Performance ranking across all methods
+- Statistical significance testing
+- Improvement analysis for custom agents
+- Detailed performance reports
 
 ## 🔧 Configuration
 
-### Instance Selection
-Edit `main.py` to change the problem instance:
-```python
-instance_path = "instances/ta01"  # Change to your instance
+### Instance Format
+
+JSS instances follow standard format:
+```
+[num_jobs] [num_machines]
+[job_0_operations: machine_id processing_time ...]
+[job_1_operations: machine_id processing_time ...]
+...
 ```
 
-### Episode Count
-Adjust the number of episodes for more robust results:
-```python
-num_episodes = 30  # Increase for better statistics
+### Controller Format
+
+Controller files define people-machine assignments:
+```
+person_id machine_id_1 machine_id_2 ...
+person_id machine_id_1 machine_id_2 ...
+...
 ```
 
-### Agent Parameters
-Customize agents in `agents.py`:
-```python
-# For lookahead agent
-agent = AdaptiveLookAheadAgent(lookahead_depth=3)
-```
+## 📈 Example Results
 
-## 📊 Output Files
+The framework generates comprehensive outputs including:
 
-- `jss_comparison_plots.png`: Visualization comparing all methods
-- `detailed_results.csv`: Episode-by-episode results
-- Console output with comprehensive analysis
+- **Performance Dashboard**: Visual comparison of all methods
+- **Gantt Charts**: Schedule visualization with job assignments
+- **Statistical Reports**: Detailed performance analysis
+- **CSV Data**: Raw results for further analysis
 
-## 🧪 Extending the Framework
+## 🔬 Research Applications
 
-### Adding New Agents
+This framework is designed for:
+- **Algorithm Development**: Testing new JSS heuristics and algorithms
+- **Benchmarking**: Comparing performance across standard instances
+- **Real-world Modeling**: Incorporating realistic constraints
+- **Educational Purposes**: Understanding JSS optimization techniques
 
-1. Create a new agent class inheriting from `BaseJSSAgent`:
-```python
-class YourCustomAgent(BaseJSSAgent):
-    def __init__(self):
-        super().__init__("YourAgentName")
-    
-    def __call__(self, env, obs):
-        # Your decision logic here
-        return selected_action
-```
+## 🤝 Contributing
 
-2. Add to the factory function in `agents.py`:
-```python
-def create_agent(agent_type: str):
-    if agent_type == "your_agent":
-        return YourCustomAgent()
-    # ... existing agents
-```
-
-### Adding New Dispatching Rules
-
-Modify `dispatching_rules` list in `comparison_framework.py`:
-```python
-self.dispatching_rules = [
-    'SPT', 'FIFO', 'MWR', 'LWR', 'MOR', 'LOR', 'CR', 'YOUR_RULE'
-]
-```
-
-## 📈 Performance Metrics
-
-The framework tracks:
-- **Makespan**: Total completion time (primary objective)
-- **Reward**: Cumulative environment reward
-- **Execution Time**: Agent decision time
-- **Statistical Measures**: Mean, standard deviation, min/max values
-
-## 🏆 Expected Performance
-
-The HybridPriorityScoringAgent typically achieves:
-- 5-15% improvement over best dispatching rules
-- Consistent performance across different problem instances
-- Adaptive behavior based on scheduling progress
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Environment Creation Failed**
-   - Check instance path exists
-   - Verify JSSEnv installation
-   - Ensure instance format is correct
-
-2. **Agent Performance Issues**
-   - Increase number of episodes for better statistics
-   - Check for legal action handling
-   - Verify observation format compatibility
-
-3. **Memory Issues**
-   - Reduce number of episodes
-   - Close environments properly
-   - Monitor memory usage during runs
+Contributions are welcome! Areas for enhancement:
+- Additional heuristic implementations
+- Extended visualization capabilities
+- New constraint types
+- Performance optimizations
 
 ## 📚 References
 
-- [JSSEnv GitHub Repository](https://github.com/prosysscience/JSSEnv)
-- Job Shop Scheduling Problem literature
-- Dispatching rules in manufacturing systems
+This implementation is based on established JSS research and incorporates:
+- Classical dispatching rules from scheduling literature
+- Modern AI-based approaches
+- Real-world constraint modeling
+- Comprehensive evaluation methodologies
 
+## 📝 License
 
-**Note**: Make sure to have proper JSS problem instances in the `instances/` directory before running the comparison framework.
+This project is provided for educational and research purposes. Please ensure proper attribution when using or extending this work.
+
+---
+
+**Note**: This framework requires the JSSEnv environment package for execution. Ensure all dependencies are properly installed before running the examples.
