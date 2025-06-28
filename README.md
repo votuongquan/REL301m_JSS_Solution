@@ -7,17 +7,21 @@ This repository contains an advanced **Job Shop Scheduling (JSS)** solution fram
 ## ✨ Key Features
 
 ### 🤖 Custom Intelligent Agents
+
 - **HybridPriorityScoringAgent**: Advanced agent combining multiple heuristics with dynamic weighting
 - **AdaptiveLookAheadAgent**: Agent with limited lookahead for better decision making
 - **ControllerJSSAgent**: Agent that respects people-machine assignment constraints
 
 ### 📊 Comprehensive Analysis Tools
+
 - Performance comparison framework across multiple scheduling methods
 - Advanced visualization dashboard with interactive charts
+- **Gantt chart generation for custom agents** ⭐ NEW ⭐
 - Statistical analysis and performance metrics
 - Gantt chart generation for schedule visualization
 
 ### 🔧 Flexible Architecture
+
 - Support for standard JSS benchmark instances (TA, DMU series)
 - Integration with JSSEnv gymnasium environment
 - Configurable controller constraints for realistic workforce modeling
@@ -67,6 +71,7 @@ python compare.py --instance dmu16 --episodes 30
 ```
 
 **Parameters:**
+
 - `--instance`: Instance name (e.g., dmu16, ta01)
 - `--episodes`: Number of episodes per method (default: 30)
 
@@ -79,6 +84,7 @@ python main.py --instance dmu19 --controller 20p_20m --num_people 20
 ```
 
 **Parameters:**
+
 - `--instance`: JSS instance name
 - `--controller`: Controller configuration file
 - `--num_people`: Number of available people
@@ -90,6 +96,7 @@ python main.py --instance dmu19 --controller 20p_20m --num_people 20
 The comparison framework evaluates multiple scheduling approaches:
 
 **Classical Dispatching Rules:**
+
 - SPT (Shortest Processing Time)
 - FIFO (First In, First Out)
 - MWR (Most Work Remaining)
@@ -99,12 +106,14 @@ The comparison framework evaluates multiple scheduling approaches:
 - CR (Critical Ratio)
 
 **Custom Intelligent Agents:**
+
 - **HybridPriorityScoringAgent**: Combines multiple heuristics with dynamic weights
 - **AdaptiveLookAheadAgent**: Uses limited lookahead for better decisions
 
 ### Controller-Constrained Scheduling
 
 The main script supports realistic scheduling scenarios where:
+
 - People have specific machine qualifications
 - Resource availability constraints apply
 - Gantt charts visualize the final schedule
@@ -114,11 +123,13 @@ The main script supports realistic scheduling scenarios where:
 The framework generates comprehensive results:
 
 1. **Performance Metrics**
+
    - Average makespan and standard deviation
    - Best and worst case performance
    - Execution time statistics
 
 2. **Visualizations**
+
    - Comprehensive performance dashboard
    - Detailed comparison charts
    - Gantt charts for schedule visualization
@@ -142,6 +153,7 @@ This agent implements a sophisticated scoring system that combines:
 - **Flow Continuity**: Ensures smooth job flow between operations
 
 The agent uses **dynamic weight adjustment** based on scheduling progress:
+
 - Early stage (0-30%): Focus on critical path and work remaining
 - Middle stage (30-70%): Balanced approach across all factors
 - Late stage (70-100%): Emphasis on SPT and machine utilization
@@ -149,6 +161,7 @@ The agent uses **dynamic weight adjustment** based on scheduling progress:
 ### AdaptiveLookAheadAgent
 
 This agent evaluates scheduling decisions by:
+
 - Performing limited lookahead simulation
 - Considering immediate and future benefits
 - Evaluating machine availability for next operations
@@ -157,6 +170,7 @@ This agent evaluates scheduling decisions by:
 ### ControllerJSSAgent
 
 Specialized for real-world constraints:
+
 - Respects people-machine qualification matrices
 - Tracks person availability and assignments
 - Optimizes considering both job priorities and resource constraints
@@ -174,6 +188,7 @@ Specialized for real-world constraints:
 ### Statistical Analysis
 
 The framework provides:
+
 - Performance ranking across all methods
 - Statistical significance testing
 - Improvement analysis for custom agents
@@ -184,6 +199,7 @@ The framework provides:
 ### Instance Format
 
 JSS instances follow standard format:
+
 ```
 [num_jobs] [num_machines]
 [job_0_operations: machine_id processing_time ...]
@@ -194,6 +210,7 @@ JSS instances follow standard format:
 ### Controller Format
 
 Controller files define people-machine assignments:
+
 ```
 person_id machine_id_1 machine_id_2 ...
 person_id machine_id_1 machine_id_2 ...
@@ -205,13 +222,26 @@ person_id machine_id_1 machine_id_2 ...
 The framework generates comprehensive outputs including:
 
 - **Performance Dashboard**: Visual comparison of all methods
-- **Gantt Charts**: Schedule visualization with job assignments
+- **Gantt Charts**: Schedule visualization with job assignments **for custom agents** ⭐
 - **Statistical Reports**: Detailed performance analysis
 - **CSV Data**: Raw results for further analysis
+
+### 🎯 New Gantt Chart Feature
+
+The comparison framework now automatically generates Gantt charts for your custom agents, showing:
+
+- **Individual Gantt charts** for each custom agent (HybridPriorityScoringAgent, AdaptiveLookAheadAgent)
+- **Side-by-side comparison** Gantt chart for visual performance comparison
+- **Job-to-machine assignments** with color-coded jobs
+- **Makespan visualization** showing the scheduling efficiency
+- **Best performance capture** - charts show the best run out of 5 episodes
+
+Charts are automatically saved to `results/{instance_name}/gantt_charts/` directory.
 
 ## 🔬 Research Applications
 
 This framework is designed for:
+
 - **Algorithm Development**: Testing new JSS heuristics and algorithms
 - **Benchmarking**: Comparing performance across standard instances
 - **Real-world Modeling**: Incorporating realistic constraints
@@ -220,6 +250,7 @@ This framework is designed for:
 ## 🤝 Contributing
 
 Contributions are welcome! Areas for enhancement:
+
 - Additional heuristic implementations
 - Extended visualization capabilities
 - New constraint types
@@ -228,6 +259,7 @@ Contributions are welcome! Areas for enhancement:
 ## 📚 References
 
 This implementation is based on established JSS research and incorporates:
+
 - Classical dispatching rules from scheduling literature
 - Modern AI-based approaches
 - Real-world constraint modeling
