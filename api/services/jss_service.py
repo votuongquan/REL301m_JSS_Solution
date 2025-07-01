@@ -12,6 +12,9 @@ from typing import Any, Dict, List, Optional
 
 # Import from project modules
 import sys
+import gym
+import numpy as np
+import pandas as pd
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
@@ -34,7 +37,7 @@ from comparison_framework.agents import (
 	BaseJSSAgent,
 	HybridPriorityScoringAgent,
 )
-from comparison_framework.advanced_visualizer import AdvancedVisualizer
+from comparison_framework.advanced_visualizer import AdvancedJSSVisualizer
 from comparison_framework.comparison_framework import JSSComparisonFramework
 from controller_agent import ControllerJSSAgent
 
@@ -211,7 +214,7 @@ class JSSExecutionService:
 		self.file_service = file_service
 		self.executor = ThreadPoolExecutor(max_workers=4)
 		self.background_tasks: Dict[str, BackgroundTaskStatus] = {}
-		self.visualizer = AdvancedVisualizer()
+		# Do not instantiate AdvancedJSSVisualizer here; instantiate with results when needed
 
 	# Background Task Management
 	def create_background_task(self, task_type: str) -> str:
@@ -320,18 +323,18 @@ class JSSExecutionService:
 			if 'dashboard' in request.visualization_types:
 				dashboard_path = results_subdir / f'dashboard.{request.format}'
 				# Use visualizer to generate dashboard
-				await self._generate_dashboard(request, dashboard_path)
+				await self._generate_dashboard(request, dashboard_path, None)
 				visualization_paths['dashboard'] = str(dashboard_path)
 
 			if 'detailed' in request.visualization_types:
 				detailed_path = results_subdir / f'detailed_comparison.{request.format}'
-				await self._generate_detailed_comparison(request, detailed_path)
+				await self._generate_detailed_comparison(request, detailed_path, None)
 				visualization_paths['detailed'] = str(detailed_path)
 
 			if 'gantt' in request.visualization_types:
 				gantt_dir = results_subdir / 'gantt_charts'
 				gantt_dir.mkdir(exist_ok=True)
-				gantt_paths = await self._generate_gantt_charts(request, gantt_dir, request.format)
+				gantt_paths = await self._generate_gantt_charts(request, gantt_dir, request.format, None)
 				visualization_paths.update(gantt_paths)
 
 		except Exception as e:
@@ -342,32 +345,67 @@ class JSSExecutionService:
 	async def _generate_visualizations_for_result(self, result: ComparisonResult, task_id: str):
 		"""Generate visualizations for a comparison result"""
 		try:
-			# Create visualization request
-			viz_request = VisualizationRequest(
-				instance_name=result.instance_name,
-				results_id=task_id,
-				visualization_types=['dashboard', 'detailed', 'gantt'],
-			)
+			# Create results directory for this task
+			timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+			results_subdir = self.file_service.results_dir / f'{result.instance_name}_{timestamp}'
+			results_subdir.mkdir(exist_ok=True)
 
-			await self.generate_visualizations(viz_request)
+			# Convert ComparisonResult to dict for AdvancedJSSVisualizer
+			visualizer_results = {}
+			for method_name, metrics in result.results.items():
+				# If metrics is a pydantic model, convert to dict
+				if hasattr(metrics, 'dict'):
+					metrics = metrics.dict()
+				visualizer_results[method_name] = metrics
 
+			visualizer = AdvancedJSSVisualizer(visualizer_results, result.instance_name)
+			dashboard_path = results_subdir / 'comprehensive_dashboard.png'
+			visualizer.create_comprehensive_dashboard(str(dashboard_path))
+			detailed_path = results_subdir / 'detailed_comparison.png'
+			visualizer.create_detailed_comparison(str(detailed_path))
+			print(f'📊 Visualizations generated in {results_subdir}')
 		except Exception as e:
 			print(f'Warning: Failed to generate visualizations for task {task_id}: {e}')
 
-	async def _generate_dashboard(self, request: VisualizationRequest, output_path: Path):
+	async def _generate_dashboard(
+		self,
+		request: VisualizationRequest,
+		output_path: Path,
+		results_data: Dict = None,
+	):
 		"""Generate comprehensive dashboard"""
-		# Implementation would use the AdvancedVisualizer
-		# This is a placeholder - actual implementation would need comparison data
-		pass
+		if results_data:
+			visualizer = AdvancedJSSVisualizer(results_data, request.instance_name)
+			visualizer.create_comprehensive_dashboard(str(output_path))
+		else:
+			# Create placeholder when no results data available
+			print(f'Warning: No results data available for dashboard generation')
 
-	async def _generate_detailed_comparison(self, request: VisualizationRequest, output_path: Path):
+	async def _generate_detailed_comparison(
+		self,
+		request: VisualizationRequest,
+		output_path: Path,
+		results_data: Dict = None,
+	):
 		"""Generate detailed comparison chart"""
-		# Implementation would use the AdvancedVisualizer
-		pass
+		if results_data:
+			visualizer = AdvancedJSSVisualizer(results_data, request.instance_name)
+			visualizer.create_detailed_comparison(str(output_path))
+		else:
+			print(f'Warning: No results data available for detailed comparison generation')
 
-	async def _generate_gantt_charts(self, request: VisualizationRequest, output_dir: Path, format: str) -> Dict[str, str]:
+	async def _generate_gantt_charts(
+		self,
+		request: VisualizationRequest,
+		output_dir: Path,
+		format: str,
+		results_data: Dict = None,
+	) -> Dict[str, str]:
 		"""Generate Gantt charts for different agents"""
-		# Implementation would use the AdvancedVisualizer
+		if results_data:
+			# Generate Gantt charts would require additional schedule data
+			# This is a placeholder for now - would need to be implemented with actual schedule data
+			print(f'Gantt chart generation not yet implemented')
 		return {}
 
 	# File management methods

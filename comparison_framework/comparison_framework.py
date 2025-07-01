@@ -5,8 +5,9 @@ from typing import Callable, Dict, List, Tuple
 import gymnasium as gym
 import numpy as np
 import pandas as pd
-from advanced_visualizer import AdvancedJSSVisualizer
-from agents import BaseJSSAgent
+
+from .agents import BaseJSSAgent
+from .advanced_visualizer import AdvancedJSSVisualizer
 
 
 class JSSPerformanceMetrics:
