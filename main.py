@@ -64,6 +64,9 @@ def main():
     agent.generate_report(makespan, total_reward, schedule, result_path, instance_path, controller_path)
     print(f"Results saved to {result_path}")
 
+    # Generate comprehensive performance report
+    agent.generate_report(makespan, total_reward, schedule, result_path, instance_path, controller_path)
+
 
 if __name__ == "__main__":
     main()

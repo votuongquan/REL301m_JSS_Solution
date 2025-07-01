@@ -582,7 +582,6 @@ class ControllerJSSAgent:
         """Return agent name for compatibility with comparison framework"""
         return self.name
 
-    
     def generate_report(self, makespan: float, total_reward: float, schedule: List[Tuple[int, int, float, float, int]], 
                        save_path: str, instance_path: str, controller_path: str) -> None:
         """Generate a comprehensive performance report"""
