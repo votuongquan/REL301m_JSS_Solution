@@ -6,3 +6,7 @@ gym == 0.26.2
 matplotlib == 3.10.3
 seaborn == 0.13.2
 gymnasium == 0.28.1
+fastapi == 0.115.0
+uvicorn[standard] == 0.32.0
+python-multipart == 0.0.12
+aiofiles == 24.1.0

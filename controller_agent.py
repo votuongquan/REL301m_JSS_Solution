@@ -4,7 +4,7 @@ Controller JSS Agent Implementation
 
 import numpy as np
 import gymnasium as gym
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 class ControllerJSSAgent:
     """JSS Agent that respects controller constraints for people-machine assignments"""
@@ -581,3 +581,286 @@ class ControllerJSSAgent:
     def get_name(self) -> str:
         """Return agent name for compatibility with comparison framework"""
         return self.name
+
+    
+    def generate_report(self, makespan: float, total_reward: float, schedule: List[Tuple[int, int, float, float, int]], 
+                       save_path: str, instance_path: str, controller_path: str) -> None:
+        """Generate a comprehensive performance report"""
+        import time
+        from pathlib import Path
+        
+        # Calculate performance metrics
+        metrics = self._calculate_performance_metrics(schedule, makespan)
+        
+        # Create report content
+        report_content = self._create_report_content(
+            makespan, total_reward, schedule, metrics, instance_path, controller_path
+        )
+        
+        # Save report
+        report_file = Path(save_path) / "report.txt"
+        with open(report_file, 'w', encoding='utf-8') as f:
+            f.write(report_content)
+        
+        print(f"📄 Performance report saved to {report_file}")
+
+    def _calculate_performance_metrics(self, schedule: List[Tuple[int, int, float, float, int]], 
+                                     makespan: float) -> Dict[str, Any]:
+        """Calculate detailed performance metrics from the schedule"""
+        if not schedule:
+            return {}
+        
+        # Basic metrics
+        total_tasks = len(schedule)
+        total_processing_time = sum(task[3] - task[2] for task in schedule)
+        
+        # Machine utilization
+        machines_used = set(task[1] for task in schedule)
+        machine_usage = {}
+        machine_idle_time = {}
+        
+        for machine_id in machines_used:
+            machine_tasks = [task for task in schedule if task[1] == machine_id]
+            machine_tasks.sort(key=lambda x: x[2])  # Sort by start time
+            
+            # Calculate busy time
+            busy_time = sum(task[3] - task[2] for task in machine_tasks)
+            utilization = (busy_time / makespan) * 100 if makespan > 0 else 0
+            machine_usage[machine_id] = utilization
+            
+            # Calculate idle time
+            idle_time = 0
+            for i in range(1, len(machine_tasks)):
+                gap = machine_tasks[i][2] - machine_tasks[i-1][3]
+                if gap > 0:
+                    idle_time += gap
+            machine_idle_time[machine_id] = idle_time
+        
+        # People utilization
+        people_used = set(task[4] for task in schedule)
+        people_usage = {}
+        people_workload = {}
+        
+        for person_id in people_used:
+            person_tasks = [task for task in schedule if task[4] == person_id]
+            busy_time = sum(task[3] - task[2] for task in person_tasks)
+            utilization = (busy_time / makespan) * 100 if makespan > 0 else 0
+            people_usage[person_id] = utilization
+            people_workload[person_id] = len(person_tasks)
+        
+        # Job completion analysis
+        jobs_completed = set(task[0] for task in schedule)
+        job_completion_times = {}
+        for job_id in jobs_completed:
+            job_tasks = [task for task in schedule if task[0] == job_id]
+            completion_time = max(task[3] for task in job_tasks)
+            job_completion_times[job_id] = completion_time
+        
+        # Resource constraint analysis
+        controller_efficiency = self._analyze_controller_efficiency(schedule)
+        
+        return {
+            'total_tasks': total_tasks,
+            'total_processing_time': total_processing_time,
+            'makespan': makespan,
+            'overall_efficiency': (total_processing_time / makespan) * 100 if makespan > 0 else 0,
+            'machines_used': len(machines_used),
+            'people_used': len(people_used),
+            'machine_usage': machine_usage,
+            'machine_idle_time': machine_idle_time,
+            'people_usage': people_usage,
+            'people_workload': people_workload,
+            'job_completion_times': job_completion_times,
+            'controller_efficiency': controller_efficiency,
+            'avg_machine_utilization': sum(machine_usage.values()) / len(machine_usage) if machine_usage else 0,
+            'avg_people_utilization': sum(people_usage.values()) / len(people_usage) if people_usage else 0,
+            'max_machine_utilization': max(machine_usage.values()) if machine_usage else 0,
+            'min_machine_utilization': min(machine_usage.values()) if machine_usage else 0,
+            'max_people_utilization': max(people_usage.values()) if people_usage else 0,
+            'min_people_utilization': min(people_usage.values()) if people_usage else 0
+        }
+
+    def _analyze_controller_efficiency(self, schedule: List[Tuple[int, int, float, float, int]]) -> Dict[str, Any]:
+        """Analyze how efficiently the controller constraints are being utilized"""
+        if not schedule:
+            return {}
+        
+        # Analyze person-machine combinations used
+        person_machine_combinations = set((task[4], task[1]) for task in schedule)
+        
+        # Calculate theoretical maximum combinations
+        total_possible_combinations = 0
+        for person_id, allowed_machines in self.controller.items():
+            total_possible_combinations += len(allowed_machines)
+        
+        utilization_rate = (len(person_machine_combinations) / total_possible_combinations) * 100 if total_possible_combinations > 0 else 0
+        
+        # Find bottleneck people (those who are overutilized)
+        people_task_count = {}
+        for task in schedule:
+            person_id = task[4]
+            people_task_count[person_id] = people_task_count.get(person_id, 0) + 1
+        
+        avg_tasks_per_person = sum(people_task_count.values()) / len(people_task_count) if people_task_count else 0
+        bottleneck_people = [person_id for person_id, count in people_task_count.items() 
+                           if count > avg_tasks_per_person * 1.5]
+        
+        # Find underutilized people
+        all_people = set(self.controller.keys())
+        used_people = set(people_task_count.keys())
+        unused_people = all_people - used_people
+        
+        return {
+            'person_machine_combinations_used': len(person_machine_combinations),
+            'total_possible_combinations': total_possible_combinations,
+            'combination_utilization_rate': utilization_rate,
+            'bottleneck_people': bottleneck_people,
+            'unused_people': list(unused_people),
+            'avg_tasks_per_person': avg_tasks_per_person,
+            'people_task_distribution': people_task_count
+        }
+
+    def _create_report_content(self, makespan: float, total_reward: float, 
+                              schedule: List[Tuple[int, int, float, float, int]], 
+                              metrics: Dict[str, Any], instance_path: str, controller_path: str) -> str:
+        """Create the formatted report content"""
+        from datetime import datetime
+        
+        report = []
+        report.append("=" * 80)
+        report.append("CONTROLLER JSS AGENT - PERFORMANCE REPORT")
+        report.append("=" * 80)
+        report.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        report.append(f"Agent: {self.name}")
+        report.append("")
+        
+        # Configuration section
+        report.append("📋 CONFIGURATION")
+        report.append("-" * 40)
+        report.append(f"Instance: {instance_path}")
+        report.append(f"Controller: {controller_path}")
+        report.append(f"Number of People: {self.num_people}")
+        report.append("")
+        
+        # Performance summary
+        report.append("🎯 PERFORMANCE SUMMARY")
+        report.append("-" * 40)
+        report.append(f"Makespan: {makespan:.2f} time units")
+        report.append(f"Total Reward: {total_reward:.2f}")
+        report.append(f"Total Tasks Scheduled: {metrics.get('total_tasks', 0)}")
+        report.append(f"Overall Efficiency: {metrics.get('overall_efficiency', 0):.2f}%")
+        report.append("")
+        
+        # Resource utilization
+        report.append("🔧 RESOURCE UTILIZATION")
+        report.append("-" * 40)
+        report.append(f"Machines Used: {metrics.get('machines_used', 0)}")
+        report.append(f"People Used: {metrics.get('people_used', 0)}")
+        report.append(f"Average Machine Utilization: {metrics.get('avg_machine_utilization', 0):.2f}%")
+        report.append(f"Average People Utilization: {metrics.get('avg_people_utilization', 0):.2f}%")
+        report.append("")
+        
+        # Machine utilization details
+        if 'machine_usage' in metrics and metrics['machine_usage']:
+            report.append("🏭 MACHINE UTILIZATION DETAILS")
+            report.append("-" * 40)
+            for machine_id, utilization in sorted(metrics['machine_usage'].items()):
+                idle_time = metrics['machine_idle_time'].get(machine_id, 0)
+                report.append(f"Machine {machine_id:2d}: {utilization:6.2f}% utilization (idle: {idle_time:.2f})")
+            
+            report.append("")
+            report.append(f"Highest Utilized Machine: {metrics.get('max_machine_utilization', 0):.2f}%")
+            report.append(f"Lowest Utilized Machine: {metrics.get('min_machine_utilization', 0):.2f}%")
+            report.append("")
+        
+        # People utilization details
+        if 'people_usage' in metrics and metrics['people_usage']:
+            report.append("👥 PEOPLE UTILIZATION DETAILS")
+            report.append("-" * 40)
+            for person_id, utilization in sorted(metrics['people_usage'].items()):
+                workload = metrics['people_workload'].get(person_id, 0)
+                report.append(f"Person {person_id:2d}: {utilization:6.2f}% utilization ({workload} tasks)")
+            
+            report.append("")
+            report.append(f"Highest Utilized Person: {metrics.get('max_people_utilization', 0):.2f}%")
+            report.append(f"Lowest Utilized Person: {metrics.get('min_people_utilization', 0):.2f}%")
+            report.append("")
+        
+        # Controller efficiency analysis
+        if 'controller_efficiency' in metrics:
+            ce = metrics['controller_efficiency']
+            report.append("🎛️ CONTROLLER EFFICIENCY ANALYSIS")
+            report.append("-" * 40)
+            report.append(f"Person-Machine Combinations Used: {ce.get('person_machine_combinations_used', 0)}")
+            report.append(f"Total Possible Combinations: {ce.get('total_possible_combinations', 0)}")
+            report.append(f"Combination Utilization Rate: {ce.get('combination_utilization_rate', 0):.2f}%")
+            report.append(f"Average Tasks per Person: {ce.get('avg_tasks_per_person', 0):.2f}")
+            
+            if ce.get('bottleneck_people'):
+                report.append(f"Bottleneck People (overutilized): {ce['bottleneck_people']}")
+            
+            if ce.get('unused_people'):
+                report.append(f"Unused People: {ce['unused_people']}")
+            
+            report.append("")
+        
+        # Job completion analysis
+        if 'job_completion_times' in metrics and metrics['job_completion_times']:
+            report.append("📊 JOB COMPLETION ANALYSIS")
+            report.append("-" * 40)
+            completion_times = list(metrics['job_completion_times'].values())
+            avg_completion = sum(completion_times) / len(completion_times)
+            report.append(f"Average Job Completion Time: {avg_completion:.2f}")
+            report.append(f"Earliest Job Completion: {min(completion_times):.2f}")
+            report.append(f"Latest Job Completion: {max(completion_times):.2f}")
+            report.append("")
+        
+        # Performance insights
+        report.append("💡 PERFORMANCE INSIGHTS")
+        report.append("-" * 40)
+        
+        # Efficiency insights
+        efficiency = metrics.get('overall_efficiency', 0)
+        if efficiency > 80:
+            report.append("✅ Excellent efficiency - schedule is well-optimized")
+        elif efficiency > 60:
+            report.append("⚠️  Good efficiency - some room for improvement")
+        else:
+            report.append("❌ Low efficiency - significant optimization potential")
+        
+        # Resource utilization insights
+        avg_machine_util = metrics.get('avg_machine_utilization', 0)
+        avg_people_util = metrics.get('avg_people_utilization', 0)
+        
+        if avg_machine_util < 50:
+            report.append("📉 Low machine utilization - consider reducing idle time")
+        elif avg_machine_util > 90:
+            report.append("🔥 Very high machine utilization - potential bottleneck")
+        
+        if avg_people_util < 50:
+            report.append("👤 Low people utilization - workforce may be underutilized")
+        elif avg_people_util > 90:
+            report.append("👥 Very high people utilization - potential workforce bottleneck")
+        
+        # Controller constraints insights
+        if 'controller_efficiency' in metrics:
+            ce = metrics['controller_efficiency']
+            util_rate = ce.get('combination_utilization_rate', 0)
+            
+            if util_rate < 30:
+                report.append("🎛️  Low controller utilization - many person-machine combinations unused")
+            elif util_rate > 70:
+                report.append("🎛️  High controller utilization - efficiently using available combinations")
+            
+            if ce.get('unused_people'):
+                report.append(f"👤 {len(ce['unused_people'])} people were not assigned any tasks")
+            
+            if ce.get('bottleneck_people'):
+                report.append(f"⚠️  {len(ce['bottleneck_people'])} people are potential bottlenecks")
+        
+        report.append("")
+        report.append("=" * 80)
+        report.append("END OF REPORT")
+        report.append("=" * 80)
+        
+        return "\n".join(report)
