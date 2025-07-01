@@ -32,7 +32,11 @@ export async function handleApiCall<T>(
 
     // Check if API returned an error (error_code = 1 means error, error_code = 0 means success)
     if (data.error_code !== 0) {
-      console.log(`Error: ${data.message || 'API Error'}`);
+      throw new ApiException(
+        response.status,
+        data.error_code,
+        data.message || 'API Error'
+      );
     }
 
     // Return the data if successful (can be null)
@@ -46,7 +50,11 @@ export async function handleApiCall<T>(
         
         // If the response follows our CommonResponse format
         if (responseData && typeof responseData.error_code === 'number') {
-          console.log(`Error: ${responseData.message || 'API Error'}`);
+          throw new ApiException(
+            error.response.status,
+            responseData.error_code,
+            responseData.message || 'API Error'
+          );
         }
         
         // If it's a standard HTTP error
@@ -54,17 +62,30 @@ export async function handleApiCall<T>(
         if (error.response.status === 405) {
           customMessage = 'Method Not Allowed: Bạn đang gọi sai method (GET/POST/PUT/DELETE) cho endpoint này';
         }
-        console.log(`Error: ${customMessage}`);
+        
+        throw new ApiException(
+          error.response.status,
+          1,
+          customMessage
+        );
       } else if (error.request) {
         // Network error
-        console.log(`Network Error: Unable to reach server. Please check your internet connection.`);
+        throw new ApiException(
+          0,
+          1,
+          'Network Error: Unable to reach server. Please check your internet connection.'
+        );
       }
     } else if (error instanceof ApiException) {
       // Re-throw our custom API exceptions
       throw error;
     } else {
       // Other errors
-      console.log(`An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown Error'}`);
+      throw new ApiException(
+        500,
+        1,
+        `An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown Error'}`
+      );
     }
   }
   
@@ -86,7 +107,11 @@ export async function handleApiCallNoData(
 
     // Check if API returned an error (error_code = 1 means error, error_code = 0 means success)
     if (data.error_code !== 0) {
-      console.log(`Error: ${data.message || 'API Error'}`);
+      throw new ApiException(
+        response.status,
+        data.error_code,
+        data.message || 'API Error'
+      );
     }
   } catch (error: unknown) {
     // Handle axios errors (network errors, HTTP errors, etc.)
@@ -97,7 +122,11 @@ export async function handleApiCallNoData(
         
         // If the response follows our CommonResponse format
         if (responseData && typeof responseData.error_code === 'number') {
-          console.log(`Error: ${responseData.message || 'API Error'}`);
+          throw new ApiException(
+            error.response.status,
+            responseData.error_code,
+            responseData.message || 'API Error'
+          );
         }
         
         // If it's a standard HTTP error
@@ -105,18 +134,66 @@ export async function handleApiCallNoData(
         if (error.response.status === 405) {
           customMessage = 'Method Not Allowed: Bạn đang gọi sai method (GET/POST/PUT/DELETE) cho endpoint này';
         }
-        console.log(`Error: ${customMessage}`);
+        
+        throw new ApiException(
+          error.response.status,
+          1,
+          customMessage
+        );
       } else if (error.request) {
         // Network error
-        console.log(`Network Error: Unable to reach server. Please check your internet connection.`);
+        throw new ApiException(
+          0,
+          1,
+          'Network Error: Unable to reach server. Please check your internet connection.'
+        );
       }
     } else if (error instanceof ApiException) {
       // Re-throw our custom API exceptions
       throw error;
     } else {
       // Other errors
-      console.log(`An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown Error'}`);
+      throw new ApiException(
+        500,
+        1,
+        `An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown Error'}`
+      );
     }
+  }
+}
+
+/**
+ * Special handler for direct API responses (non-CommonResponse format)
+ * Used for endpoints that return data directly without the CommonResponse wrapper
+ */
+export async function handleDirectApiCall<T>(
+  apiCall: () => Promise<AxiosResponse<T>>
+): Promise<T> {
+  try {
+    const response = await apiCall();
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        throw new ApiException(
+          error.response.status,
+          1,
+          error.response.statusText || 'HTTP Error'
+        );
+      } else if (error.request) {
+        throw new ApiException(
+          0,
+          1,
+          'Network Error: Unable to reach server. Please check your internet connection.'
+        );
+      }
+    }
+    
+    throw new ApiException(
+      500,
+      1,
+      `An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown Error'}`
+    );
   }
 }
 

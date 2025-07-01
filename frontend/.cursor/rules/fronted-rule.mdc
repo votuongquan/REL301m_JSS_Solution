@@ -213,11 +213,13 @@ src/
 │   ├── axios-instance.ts   # Axios configuration
 │   ├── auth-api.ts         # Auth API calls
 │   ├── user-api.ts         # User API calls
-│   └── chat-api.ts         # Chat API calls
+│   ├── chat-api.ts         # Chat API calls
+│   └── jss-api.ts          # JSS operations API calls
 ├── types/                  # TypeScript definitions
 │   ├── auth.type.ts        # Auth-related types
 │   ├── chat.type.ts        # Chat-related types
 │   ├── common.type.ts      # Common types
+│   ├── jss.type.ts         # JSS operations types
 │   └── agent-types.ts      # Agent-related types
 ├── redux/                  # Redux store
 │   ├── store.ts            # Store configuration
@@ -908,3 +910,4 @@ function DataComponent() {
 12. **Internationalization**: Support multiple locales with proper fallbacks
 13. **Theme Consistency**: Support light/dark modes with system preferences
 14. **Code Organization**: Follow established file structure and naming conventions
+15. **JSS API Integration**: Use centralized jss-api.ts for all JSS operations, with proper error handling and polling for background tasks
