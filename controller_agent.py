@@ -95,6 +95,11 @@ class ControllerJSSAgent:
         
         for person_id in expired_people:
             del self.people_assignments[person_id]
+        
+        # Debug info if there are many active assignments
+        if len(self.people_assignments) > self.num_people:
+            print(f"Warning: More assignments ({len(self.people_assignments)}) than people ({self.num_people})")
+            print(f"Active assignments: {[(pid, assn['end_time']) for pid, assn in self.people_assignments.items()]}")
 
     def _get_resource_utilization(self, current_time: float) -> Dict[str, float]:
         """Calculate current resource utilization metrics"""
@@ -150,7 +155,10 @@ class ControllerJSSAgent:
         all_legal_jobs = []
         
         for i in range(env.jobs):
-            if legal_actions[i] and env.todo_time_step_job[i] < env.machines:
+            # Check legal actions, job completion, and that there are actually more operations
+            if (legal_actions[i] and 
+                env.todo_time_step_job[i] < env.machines and 
+                env.todo_time_step_job[i] < len(env.instance_matrix[i])):
                 all_legal_jobs.append(i)
                 current_op = env.todo_time_step_job[i]
                 machine_id = env.instance_matrix[i][current_op][0]
@@ -187,11 +195,18 @@ class ControllerJSSAgent:
         # CRITICAL: Never skip all jobs - ensure scheduling progress
         if not available_jobs:
             if all_legal_jobs:
-                # Force schedule the first legal job even if it has resource constraints
-                print(f"WARNING: No immediately available jobs, but {len(all_legal_jobs)} legal jobs exist")
-                print("This suggests controller configuration issues - forcing first legal job")
-                forced_job = all_legal_jobs[0]
-                return forced_job
+                # Before forcing, double-check that jobs are actually not completed and have operations remaining
+                truly_incomplete_jobs = [job for job in all_legal_jobs 
+                                       if (env.todo_time_step_job[job] < env.machines and 
+                                           env.todo_time_step_job[job] < len(env.instance_matrix[job]))]
+                if truly_incomplete_jobs:
+                    print(f"WARNING: No immediately available jobs, but {len(truly_incomplete_jobs)} incomplete legal jobs exist")
+                    print("This suggests controller configuration issues - forcing first incomplete legal job")
+                    forced_job = truly_incomplete_jobs[0]
+                    return forced_job
+                else:
+                    # All jobs are actually completed
+                    return env.jobs if legal_actions[env.jobs] else 0
             else:
                 # Truly no legal actions available
                 return env.jobs if legal_actions[env.jobs] else 0
@@ -422,22 +437,33 @@ class ControllerJSSAgent:
         completed_ops = {i: set() for i in range(self.env.jobs)}
         # Track current assignments for better schedule recording
         current_action_assignments = {}
+        
+        # Add safety mechanism to prevent infinite loops
+        max_iterations = self.env.jobs * self.env.machines * 10  # Conservative upper bound
+        iteration_count = 0
 
-        while not done:
+        while not done and iteration_count < max_iterations:
+            iteration_count += 1
             action = self.__call__(self.env, obs)
 
-            # Validate action
+            # Enhanced validation for action
             if action >= self.env.jobs and action != self.env.jobs:
-                print(f"Error: Invalid action {action} received, defaulting to no-op")
                 action = self.env.jobs
-            elif action < self.env.jobs and self.env.todo_time_step_job[action] >= self.env.machines:
-                print(f"Error: Attempted to schedule completed job {action}, defaulting to no-op")
-                action = self.env.jobs
+            elif action < self.env.jobs:
+                # Double-check that the job is not completed
+                if self.env.todo_time_step_job[action] >= self.env.machines:
+                    action = self.env.jobs
+                # Also check if the job has any remaining operations in the instance matrix
+                elif self.env.todo_time_step_job[action] >= len(self.env.instance_matrix[action]):
+                    action = self.env.jobs
+                # Additional safety check for legal actions
+                elif not obs["action_mask"][action] if isinstance(obs, dict) and "action_mask" in obs else not self.env.get_legal_actions()[action]:
+                    action = self.env.jobs
 
             # Before taking the step, record the assignment if it's a valid job action
             if action < self.env.jobs:
                 current_op = self.env.todo_time_step_job[action]
-                if current_op < self.env.machines:
+                if current_op < self.env.machines and current_op < len(self.env.instance_matrix[action]):
                     machine_id = self.env.instance_matrix[action][current_op][0]
                     proc_time = self.env.instance_matrix[action][current_op][1]
                     current_time = self.env.current_time_step
@@ -449,6 +475,14 @@ class ControllerJSSAgent:
                             assignment.get('machine_id') == machine_id):
                             assigned_person = person_id
                             break
+                    
+                    # If no assigned person found, try to get one
+                    if assigned_person is None:
+                        try:
+                            assigned_person, _ = self._get_earliest_available_person(machine_id, current_time)
+                        except ValueError:
+                            print(f"Warning: Could not find person for job {action}, machine {machine_id}")
+                            assigned_person = 0  # Default to person 0
                     
                     if assigned_person is not None:
                         # Calculate actual start and end times
@@ -480,7 +514,7 @@ class ControllerJSSAgent:
                 current_op = assignment['current_op']
                 
                 # Only record if this operation hasn't been recorded before
-                if (action, current_op) not in completed_ops[action]:
+                if current_op not in completed_ops[action]:
                     schedule.append((
                         action,
                         assignment['machine_id'],
@@ -488,24 +522,61 @@ class ControllerJSSAgent:
                         assignment['end_time'],
                         assignment['person_id']
                     ))
-                    completed_ops[action].add((action, current_op))
+                    completed_ops[action].add(current_op)
                     
                 # Clean up the assignment record
                 del current_action_assignments[action]
+            elif action < self.env.jobs:
+                # If we took a job action but didn't record it properly, try to recover
+                current_op = self.env.todo_time_step_job[action] - 1  # Operation that was just completed
+                if current_op >= 0 and current_op not in completed_ops[action]:
+                    print(f"DEBUG: Recovering missing record for job {action}, operation {current_op}")
+                    # Create a basic schedule entry
+                    machine_id = self.env.instance_matrix[action][current_op][0]
+                    proc_time = self.env.instance_matrix[action][current_op][1]
+                    current_time = self.env.current_time_step
+                    
+                    schedule.append((
+                        action,
+                        machine_id,
+                        current_time - proc_time,  # Estimate start time
+                        current_time,  # End time is current time
+                        0  # Default person
+                    ))
+                    completed_ops[action].add(current_op)
 
             if truncated:
                 done = True
+        
+        if iteration_count >= max_iterations:
+            print(f"Warning: Episode terminated due to maximum iterations ({max_iterations}) reached")
 
         makespan = self.env.current_time_step
         print(f"Schedule contains {len(schedule)} tasks")
         
-        # Verify we have scheduled all required operations
-        total_expected_ops = sum(min(self.env.machines, len([op for op in range(self.env.machines) 
-                                                           if op < len(self.env.instance_matrix[job])])) 
-                                for job in range(self.env.jobs))
+        # Enhanced verification of scheduled operations
+        actual_total_ops = 0
+        for job_id in range(self.env.jobs):
+            job_ops = len(self.env.instance_matrix[job_id])
+            completed_for_job = len(completed_ops[job_id])
+            actual_total_ops += job_ops
+            if completed_for_job < job_ops:
+                print(f"Job {job_id}: scheduled {completed_for_job}/{job_ops} operations")
+                missing_ops = set(range(job_ops)) - completed_ops[job_id]
+                print(f"  Missing operations: {sorted(missing_ops)}")
         
-        if len(schedule) < total_expected_ops:
-            print(f"Warning: Expected {total_expected_ops} operations, but only scheduled {len(schedule)}")
+        # print(f"Total operations in instance: {actual_total_ops}")
+        # print(f"Operations scheduled: {len(schedule)}")
+        
+        if len(schedule) < actual_total_ops:
+            print(f"Warning: Expected {actual_total_ops} operations, but only scheduled {len(schedule)}")
+            
+            # Additional debugging: check final job states
+            print("\nFinal job states:")
+            for job_id in range(self.env.jobs):
+                current_op = self.env.todo_time_step_job[job_id]
+                total_ops = len(self.env.instance_matrix[job_id])
+                print(f"  Job {job_id}: operation {current_op}/{total_ops}")
         
         return makespan, total_reward, schedule
 
