@@ -1,0 +1,345 @@
+{
+  "aboutUs": {
+    "social": {
+      "about": "Về chúng tôi",
+      "followers": "Người theo dõi"
+    },
+    "title": "Giới thiệu EnterViu - Nền tảng Nghề nghiệp Chuyên nghiệp"
+  },
+  "auth": {
+    "allowPopups": "Cho phép cửa sổ bật lên để đăng nhập",
+    "bySigningIn": "Bằng việc đăng nhập, bạn đồng ý với điều khoản của chúng tôi.",
+    "connectingToGoogle": "Đang kết nối với Google...",
+    "email": "Email",
+    "login": "Đăng nhập",
+    "loginSuccess": "Đăng nhập thành công",
+    "loginWithGoogle": "Đăng nhập với Google",
+    "logout": "Đăng xuất",
+    "name": "Tên",
+    "openingGoogleLogin": "Đang mở đăng nhập Google...",
+    "pleaseWait": "Vui lòng chờ...",
+    "role": "Vai trò",
+    "signingIn": "Đang đăng nhập...",
+    "signInWithGoogle": "Đăng nhập với Google",
+    "unableToConnect": "Không thể kết nối",
+    "username": "Tên đăng nhập"
+  },
+  "carousel": {
+    "currentImage": "Hình hiện tại",
+    "description": "Mô tả",
+    "nextImage": " ",
+    "prevImage": " ",
+    "subtitle": "Khám phá thế giới truyền thông sáng tạo",
+    "title": "EnterViu - Nền tảng Nghề nghiệp Chuyên nghiệp"
+  },
+  "chat": {
+    "agentManagement": {
+      "agentConfig": "Cấu hình tác nhân",
+      "agentError": "Lỗi tác nhân",
+      "agentLoading": "Đang tải tác nhân...",
+      "agentTab": "Tác nhân",
+      "apiKeyManagement": {
+        "apiKeyPlaceholder": "Nhập API key của bạn",
+        "currentKey": "API key hiện tại",
+        "description": "Quản lý API key cho các nhà cung cấp AI.",
+        "enterApiKey": "Nhập API key",
+        "hideKey": "Ẩn key",
+        "keyUpdated": "API key đã được cập nhật",
+        "noKeySet": "Chưa thiết lập API key",
+        "selectProvider": "Chọn nhà cung cấp",
+        "showKey": "Hiện key",
+        "title": "Quản lý API Key",
+        "update": "Cập nhật",
+        "updateFailed": "Cập nhật thất bại"
+      },
+      "apiKeyTab": "API Key",
+      "currentAgent": "Tác nhân hiện tại",
+      "manage": "Quản lý",
+      "maxTokens": "Số token tối đa",
+      "modelName": "Tên mô hình",
+      "noAgentConfigured": "Chưa cấu hình tác nhân",
+      "provider": "Nhà cung cấp",
+      "selectModel": "Chọn mô hình",
+      "selectProvider": "Chọn nhà cung cấp",
+      "subtitle": "Cấu hình AI cho hỗ trợ truyền thông.",
+      "temperature": "Nhiệt độ",
+      "title": "Quản lý trợ lý AI",
+      "updateAgent": "Cập nhật tác nhân",
+      "validateAgent": "Xác thực tác nhân",
+      "validationCompleted": "Đã hoàn tất xác thực",
+      "validationFailed": "Xác thực thất bại",
+      "validationSuccess": "Xác thực thành công",
+      "validationTab": "Xác thực"
+    },
+    "assistant": "Trợ lý Truyền thông",
+    "chats": "Trò chuyện",
+    "conversations": "Cuộc hội thoại",
+    "copied": "Đã sao chép",
+    "copy": "Sao chép",
+    "createFirstChat": "Bắt đầu cuộc trò chuyện đầu tiên của bạn",
+    "defaultChatTitle": "Trò chuyện mới",
+    "files": "Tệp",
+    "filesAssociated": "Tệp liên quan",
+    "htmlRenderError": "Lỗi hiển thị nội dung",
+    "messages": "Tin nhắn",
+    "newConversation": "Cuộc hội thoại mới",
+    "noConversationsYet": "Chưa có cuộc hội thoại nào",
+    "noFilesUploaded": "Chưa tải lên tệp nào",
+    "noMessages": "Chưa có tin nhắn",
+    "preview": "Xem trước",
+    "sending": "Đang gửi...",
+    "showCode": "Hiện mã",
+    "startConversation": "Bắt đầu hội thoại",
+    "systemPrompt": {
+      "conversationPrompt": "Đặt chủ đề thảo luận",
+      "description": "Tùy chỉnh chủ đề hoặc câu hỏi thảo luận.",
+      "placeholder": "Nhập chủ đề hoặc câu hỏi muốn thảo luận...",
+      "title": "Lời nhắc hệ thống"
+    },
+    "thisConversation": "Cuộc hội thoại này",
+    "tooltips": {
+      "deleteConversation": "Xóa cuộc hội thoại",
+      "editName": "Chỉnh sửa tên",
+      "editSystemPrompt": "Chỉnh sửa lời nhắc hệ thống",
+      "addConversation": "Thêm hội thoại",
+      "refreshConversation": "Làm mới hội thoại",
+      "closeChat": "Đóng cửa sổ chat",
+      "openChat": "Mở cửa sổ chat",
+      "uploadFile": "Tải lên tệp",
+      "sendMessage": "Gửi tin nhắn",
+      "hasCustomSystemPrompt": "Lời nhắc hệ thống tùy chỉnh",
+      "collapseSidebar": "Thu gọn thanh bên",
+      "expandSidebar": "Mở rộng thanh bên"
+    },
+    "typeMessage": "Nhập câu hỏi của bạn...",
+    "typing": "Đang nhập...",
+    "uploadedFiles": "Tệp đã tải lên",
+    "uploadFilesDescription": "Đính kèm tài liệu để thảo luận chuyên sâu",
+    "welcomeDescription": "Hỗ trợ hoạt động truyền thông của CLB, tạo nội dung sáng tạo và quản lý thông tin hiệu quả. Trợ lý AI giúp bạn viết bài, lên ý tưởng và tối ưu hóa nội dung truyền thông.",
+    "welcomeTitle": "Chào mừng đến với Nền tảng CLB Truyền thông",
+    "errorCreateConversation": "Không thể tạo cuộc hội thoại",
+    "errorDeleteConversation": "Không thể xóa cuộc hội thoại",
+    "errorLoadConversations": "Không thể tải cuộc hội thoại",
+    "errorLoadFiles": "Không thể tải tệp",
+    "errorLoadMessages": "Không thể tải tin nhắn",
+    "errorSendMessage": "Không thể gửi tin nhắn",
+    "errorUpdatePrompt": "Không thể cập nhật lời nhắc",
+    "errorUploadFile": "Không thể tải lên tệp",
+    "refresh": "Làm mới",
+    "uploadDragDrop": "Kéo và thả tệp để tải lên"
+  },
+  "common": {
+    "branding": "EnterViu - Nền tảng Nghề nghiệp Chuyên nghiệp",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "download": "Tải xuống",
+    "loading": "Đang tải...",
+    "no": "Không",
+    "refresh": "Làm mới",
+    "save": "Lưu",
+    "upload": "Tải lên",
+    "yes": "Có"
+  },
+  "footer": {
+    "copyright": "© 2024 EnterViu - Nền tảng Nghề nghiệp Chuyên nghiệp",
+    "legal": {
+      "cookies": "Chính sách Cookie",
+      "privacy": "Chính sách Bảo mật",
+      "terms": "Điều khoản Dịch vụ"
+    },
+    "location": "Việt Nam",
+    "madeWith": "Được tạo ra với đam mê truyền thông",
+    "social": {
+      "followUs": "Theo dõi chúng tôi"
+    },
+    "title": "EnterViu - Nền tảng Nghề nghiệp Chuyên nghiệp",
+    "company": {
+      "title": "CLB",
+      "about": "Về chúng tôi",
+      "team": "Thành viên",
+      "careers": "Tham gia",
+      "contact": "Liên hệ"
+    },
+    "products": {
+      "title": "Hoạt động",
+      "webDevelopment": "Phát triển web",
+      "mobileApps": "Ứng dụng di động",
+      "aiSolutions": "Giải pháp AI",
+      "consulting": "Tư vấn truyền thông"
+    },
+    "resources": {
+      "title": "Tài nguyên",
+      "documentation": "Tài liệu",
+      "blog": "Blog",
+      "support": "Hỗ trợ",
+      "community": "Cộng đồng"
+    }
+  },
+  "home": {
+    "authenticatedDescription": "Chào mừng trở lại! Tiếp tục hành trình truyền thông của bạn.",
+    "confirmed": "Đã xác nhận",
+    "description": "EnterViu - Nền tảng Nghề nghiệp Chuyên nghiệp - nơi kết nối ứng viên với cơ hội việc làm, xây dựng hồ sơ chuyên nghiệp và nhận hướng dẫn nghề nghiệp. Nền tảng AI hỗ trợ xây dựng hồ sơ, ghép đôi việc làm và phát triển sự nghiệp hiệu quả.",
+    "email": "Email",
+    "facebookPageName": "Trang Facebook",
+    "facebookPostCountPrefix": "Bài đăng:",
+    "facebookPostCountSuffix": "trên Facebook",
+    "features": {
+      "darkMode": {
+        "description": "Dễ đọc trong mọi điều kiện ánh sáng",
+        "title": "Chế độ tối",
+        "features": {
+          "darkLightThemes": "Chuyển đổi giữa giao diện tối và sáng",
+          "eyeFriendlyDesign": "Thiết kế thân thiện với mắt khi đọc lâu",
+          "automaticSwitching": "Tự động chuyển đổi giao diện theo hệ thống"
+        }
+      },
+      "fastPerformance": {
+        "description": "Phản hồi tức thì, trải nghiệm mượt mà",
+        "title": "Hiệu năng cao",
+        "features": {
+          "optimizedPerformance": "Tối ưu hóa cho tốc độ phản hồi nhanh",
+          "lightningFastLoading": "Tải trang cực nhanh",
+          "seamlessUserExperience": "Trải nghiệm liền mạch, không gián đoạn"
+        }
+      },
+      "globalReady": {
+        "description": "Hỗ trợ đa ngôn ngữ cho người học toàn cầu",
+        "title": "Sẵn sàng toàn cầu",
+        "features": {
+          "multiLanguageSupport": "Hỗ trợ nhiều ngôn ngữ",
+          "globalAccessibility": "Truy cập từ mọi nơi trên thế giới",
+          "culturalAdaptation": "Nội dung phù hợp với từng nền văn hóa"
+        }
+      },
+      "modernStack": {
+        "description": "Xây dựng bằng công nghệ web hiện đại",
+        "title": "Công nghệ hiện đại",
+        "features": {
+          "nextjsReact": "Phát triển với Next.js & React",
+          "typescriptSupport": "Hỗ trợ TypeScript đảm bảo ổn định",
+          "modernDevelopmentTools": "Công cụ phát triển hiện đại, chuẩn quốc tế"
+        }
+      },
+      "subtitle": "Tính năng nổi bật",
+      "title": "Tính năng"
+    },
+    "getStarted": "Bắt đầu",
+    "learnMore": "Tìm hiểu thêm",
+    "post": "Bài đăng",
+    "title": "EnterViu - Nền tảng Nghề nghiệp Chuyên nghiệp",
+    "unknownTime": "Không rõ thời gian",
+    "userInformation": "Thông tin người dùng",
+    "username": "Tên đăng nhập",
+    "welcomeBack": "Chào mừng trở lại!"
+  },
+  "navigation": {
+    "about": "Giới thiệu",
+    "chat": "Trò chuyện",
+    "help": "Trợ giúp",
+    "menu": "Menu",
+    "profile": "Hồ sơ",
+    "settings": "Cài đặt"
+  },
+  "profile": {
+    "changePassword": "Đổi mật khẩu",
+    "changePhoto": "Đổi ảnh",
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "title": "Hồ sơ"
+  },
+  "server": {
+    "currentTime": "Thời gian máy chủ hiện tại",
+    "locale": "Ngôn ngữ",
+    "serverRendered": "Kết xuất từ máy chủ"
+  },
+  "settings": {
+    "account": "Tài khoản",
+    "appearance": "Giao diện",
+    "changePassword": "Đổi mật khẩu",
+    "currentUser": "Người dùng hiện tại",
+    "deleteAccount": "Xóa tài khoản",
+    "downloadData": "Tải dữ liệu",
+    "emailNotifications": "Thông báo qua email",
+    "emailNotificationsDescription": "Nhận cập nhật và tin tức qua email.",
+    "enableTwoFactor": "Bật xác thực hai yếu tố",
+    "language": "Ngôn ngữ",
+    "languageDescription": "Chọn ngôn ngữ bạn muốn.",
+    "notifications": "Thông báo",
+    "pushNotifications": "Thông báo đẩy",
+    "pushNotificationsDescription": "Nhận cập nhật tức thì trên thiết bị của bạn.",
+    "security": "Bảo mật",
+    "theme": "Chủ đề",
+    "themeDescription": "Chuyển đổi giữa chế độ sáng và tối.",
+    "title": "Cài đặt",
+    "updateAccount": "Cập nhật tài khoản"
+  },
+  "survey": {
+    "complete": "Hoàn thành",
+    "continue": "Tiếp tục",
+    "previous": "Trước",
+    "noQuestions": "Không có câu hỏi nào",
+    "waitingForData": "Đang chờ dữ liệu khảo sát từ agent...",
+    "newSurveyAvailable": "Có khảo sát mới",
+    "openSurvey": "Mở Khảo Sát",
+    "surveyDescription": "Tôi đã chuẩn bị một khảo sát cho bạn. Nhấn nút bên dưới để bắt đầu!",
+    "results": {
+      "completed": "Đã hoàn thành khảo sát",
+      "description": "Cảm ơn bạn đã hoàn thành khảo sát! Câu trả lời của bạn đã được ghi nhận.",
+      "retake": "Làm lại khảo sát",
+      "title": "Kết quả khảo sát"
+    },
+    "step": "Bước",
+    "submitting": "Đang gửi...",
+    "type": {
+      "single_option": "Một lựa chọn",
+      "multiple_choice": "Nhiều lựa chọn",
+      "text_input": "Nhập văn bản",
+      "sub_form": "Biểu mẫu con",
+      "unknown_type": "Loại không xác định"
+    }
+  },
+  "team": {
+    "leadership": {
+      "bio": "Tiểu sử",
+      "experience": "Kinh nghiệm",
+      "name": "Tên",
+      "role": "Vai trò",
+      "title": "Người sáng lập",
+      "ceo": {
+        "name": "Lê Dương Tịnh Nghi",
+        "role": "Trưởng CLB Truyền thông",
+        "bio": "Nghi là người có tầm nhìn và đam mê mạnh mẽ với lĩnh vực truyền thông. Với khả năng lãnh đạo tự nhiên và sự sáng tạo, Nghi đã dẫn dắt CLB phát triển vượt bậc.",
+        "experience": "Kinh nghiệm hoạt động đoàn thể và quản lý dự án truyền thông."
+      },
+      "cto": {
+        "name": "Lương Nguyễn Minh An",
+        "role": "Phó Trưởng CLB - Kỹ thuật",
+        "bio": "An là chuyên gia về công nghệ trong CLB, phụ trách phát triển các giải pháp kỹ thuật và hệ thống hỗ trợ hoạt động CLB.",
+        "experience": "Kinh nghiệm lập trình, thiết kế web và quản lý hệ thống."
+      },
+      "designer": {
+        "name": "Đặng Phan Gia Đức",
+        "role": "Phó Trưởng CLB - Nội dung",
+        "bio": "Đức chuyên về sáng tạo nội dung và thiết kế truyền thông, mang đến những ý tưởng độc đáo và hấp dẫn cho các hoạt động CLB.",
+        "experience": "Kinh nghiệm sáng tạo nội dung, thiết kế đồ họa và quản lý mạng xã hội."
+      }
+    },
+    "subtitle": "Gặp gỡ thành viên sáng lập",
+    "title": "Thành viên CLB",
+    "values": {
+      "description": "Chúng tôi tin vào việc kết nối học sinh và phát triển kỹ năng truyền thông một cách sáng tạo.",
+      "title": "Giá trị cốt lõi",
+      "innovation": {
+        "title": "Sáng tạo",
+        "description": "Chúng tôi luôn tìm tòi ý tưởng mới và ứng dụng công nghệ để nâng cao chất lượng nội dung truyền thông."
+      },
+      "quality": {
+        "title": "Chất lượng",
+        "description": "Chúng tôi cam kết tạo ra những sản phẩm truyền thông chất lượng cao, chuyên nghiệp và ý nghĩa."
+      },
+      "community": {
+        "title": "Cộng đồng",
+        "description": "Chúng tôi xây dựng một cộng đồng học sinh gắn kết, hỗ trợ lẫn nhau trong học tập và phát triển kỹ năng."
+      }
+    }
+  }
+}
