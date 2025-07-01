@@ -57,6 +57,9 @@ def main():
     # Save detailed schedule
     save_schedule_to_csv(schedule, f"{result_path}schedule.csv")
 
+    # Generate comprehensive performance report
+    agent.generate_report(makespan, total_reward, schedule, result_path, instance_path, controller_path)
+
 
 if __name__ == "__main__":
     main()

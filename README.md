@@ -117,6 +117,7 @@ The main script supports realistic scheduling scenarios where:
 - People have specific machine qualifications
 - Resource availability constraints apply
 - Gantt charts visualize the final schedule
+- **Comprehensive performance reports** ⭐ NEW ⭐
 
 ### Output Analysis
 
@@ -135,6 +136,7 @@ The framework generates comprehensive results:
    - Gantt charts for schedule visualization
 
 3. **Reports**
+   - **Detailed performance report (report.txt)** ⭐ NEW ⭐
    - Performance ranking summary
    - Statistical analysis
    - CSV files with detailed episode results
@@ -225,6 +227,7 @@ The framework generates comprehensive outputs including:
 - **Gantt Charts**: Schedule visualization with job assignments **for custom agents** ⭐
 - **Statistical Reports**: Detailed performance analysis
 - **CSV Data**: Raw results for further analysis
+- **Performance Report (report.txt)**: Comprehensive analysis for ControllerJSSAgent ⭐ NEW ⭐
 
 ### 🎯 New Gantt Chart Feature
 
@@ -238,6 +241,34 @@ The comparison framework now automatically generates Gantt charts for your custo
 
 Charts are automatically saved to `results/{instance_name}/gantt_charts/` directory.
 
+### 📄 New Performance Report Feature
+
+The ControllerJSSAgent now automatically generates a detailed `report.txt` file containing:
+
+- **Performance Summary**: Makespan, efficiency, and task completion statistics
+- **Resource Utilization**: Detailed machine and people utilization analysis
+- **Controller Efficiency**: Analysis of person-machine combination usage
+- **Job Completion Analysis**: Individual job completion times and patterns
+- **Performance Insights**: Automated recommendations and bottleneck identification
+- **Configuration Details**: Instance and controller settings used
+
+Example report sections:
+
+```
+🎯 PERFORMANCE SUMMARY
+Makespan: 245.50 time units
+Overall Efficiency: 78.45%
+Total Tasks Scheduled: 150
+
+🔧 RESOURCE UTILIZATION
+Average Machine Utilization: 82.30%
+Average People Utilization: 75.60%
+
+💡 PERFORMANCE INSIGHTS
+✅ Excellent efficiency - schedule is well-optimized
+⚠️  2 people are potential bottlenecks
+```
+
 ## 🔬 Research Applications
 
 This framework is designed for:
@@ -245,6 +276,7 @@ This framework is designed for:
 - **Algorithm Development**: Testing new JSS heuristics and algorithms
 - **Benchmarking**: Comparing performance across standard instances
 - **Real-world Modeling**: Incorporating realistic constraints
+- **Educational Purposes**: Understanding JSS optimization techniques
 - **Educational Purposes**: Understanding JSS optimization techniques
 
 ## 🤝 Contributing
