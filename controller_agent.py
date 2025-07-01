@@ -7,8 +7,6 @@ import gymnasium as gym
 from typing import Dict, List, Tuple, Any
 from JSSEnv.envs.jss_env import JssEnv
 
-
-
 class ControllerJSSAgent:
     """JSS Agent that respects controller constraints for people-machine assignments"""
 

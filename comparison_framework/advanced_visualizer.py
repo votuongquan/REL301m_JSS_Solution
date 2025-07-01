@@ -625,15 +625,19 @@ class AdvancedJSSVisualizer:
             print(f"Warning: No schedule data for {agent_name}")
             return
 
-        fig, ax = plt.subplots(figsize=(14, 8))
+        # Apply ControllerJSSAgent styling
+        plt.style.use('seaborn-v0_8-whitegrid')
+        sns.set_palette("husl")
+        
+        fig, ax = plt.subplots(figsize=(12, 8))
 
         # Get unique machines and jobs
         machines = sorted(list(set(task[1] for task in schedule)))
         jobs = sorted(list(set(task[0] for task in schedule)))
 
-        # Create color map for jobs
-        colors = plt.cm.Set3(np.linspace(0, 1, len(jobs)))
-        job_colors = {job: colors[i] for i, job in enumerate(jobs)}
+        # Use seaborn husl color palette like ControllerJSSAgent
+        colors = sns.color_palette("husl", n_colors=len(jobs))
+        job_colors = {job: colors[i % len(colors)] for i, job in enumerate(jobs)}
 
         # Plot tasks
         for task in schedule:
@@ -641,59 +645,59 @@ class AdvancedJSSVisualizer:
             duration = end_time - start_time
             machine_idx = machines.index(machine_id)
 
-            # Plot task bar
-            bar = ax.barh(machine_idx, duration, left=start_time, height=0.6,
-                          color=job_colors[job_id],
-                          edgecolor='black', alpha=0.8, linewidth=0.5)
+            # Plot task bar with ControllerJSSAgent styling
+            ax.barh(machine_idx, duration, left=start_time, height=0.4,
+                    color=job_colors[job_id],
+                    edgecolor='black', alpha=0.8)
 
-            # Add job label on the bar if it's wide enough
-            if duration > makespan * 0.02:  # Only if bar is wide enough
-                ax.text(start_time + duration/2, machine_idx, f'J{job_id}',
-                        ha='center', va='center', fontweight='bold', fontsize=8)
-
-        # Customize plot
+        # Customize plot to match ControllerJSSAgent style
         ax.set_yticks(range(len(machines)))
         ax.set_yticklabels([f'Machine {m}' for m in machines])
-        ax.set_xlabel('Time', fontweight='bold', fontsize=12)
-        ax.set_ylabel('Machines', fontweight='bold', fontsize=12)
-        ax.set_title(f'Gantt Chart - {agent_name}\nMakespan: {makespan:.1f}',
-                     fontweight='bold', fontsize=14)
-        ax.grid(True, alpha=0.3, axis='x')
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Machines')
+        ax.set_title(f'JSS Gantt Chart - {agent_name}\nMakespan: {makespan:.1f}')
+        ax.grid(True, alpha=0.3)
 
-        # Add legend
-        legend_elements = [plt.Rectangle((0, 0), 1, 1, facecolor=job_colors[job],
-                                         edgecolor='black', label=f'Job {job}')
-                           for job in jobs[:10]]  # Limit to 10 jobs for legend
-        if len(jobs) > 10:
-            legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor='gray',
-                                                 edgecolor='black', label='...'))
-
-        ax.legend(handles=legend_elements, bbox_to_anchor=(1.05, 1), loc='upper left',
-                  fontsize=9, title='Jobs')
-
-        # Set appropriate x-axis limits
-        ax.set_xlim(0, makespan * 1.05)
+        # Add legend using mpatches like ControllerJSSAgent
+        job_patches = [mpatches.Patch(color=job_colors[job],
+                                      label=f'Job {job}') for job in sorted(jobs)]
+        plt.legend(handles=job_patches, bbox_to_anchor=(1.05, 1), loc='upper left')
 
         plt.tight_layout()
 
         # Save the chart
         filename = f"{agent_name.replace(' ', '_')}_gantt.png"
         filepath = Path(save_dir) / filename
-        plt.savefig(filepath, dpi=300, bbox_inches='tight', facecolor='white')
+        plt.savefig(filepath, dpi=300, bbox_inches='tight')
         plt.close()
 
         print(f"📊 Gantt chart for {agent_name} saved to {filepath}")
 
     def _create_comparison_gantt_chart(self, gantt_data: Dict, save_dir: str):
         """Create a comparison Gantt chart showing both agents side by side"""
+        # Apply ControllerJSSAgent styling
+        plt.style.use('seaborn-v0_8-whitegrid')
+        sns.set_palette("husl")
+        
         fig, axes = plt.subplots(
-            len(gantt_data), 1, figsize=(16, 6 * len(gantt_data)))
+            len(gantt_data), 1, figsize=(12, 6 * len(gantt_data)))
 
         if len(gantt_data) == 1:
             axes = [axes]  # Make it iterable for single plot
 
-        fig.suptitle('Gantt Chart Comparison - Custom Agents',
-                     fontsize=16, fontweight='bold')
+        fig.suptitle('JSS Gantt Chart Comparison - Custom Agents',
+                     fontsize=14)
+
+        # Get all unique jobs across all agents for consistent coloring
+        all_jobs = set()
+        for data in gantt_data.values():
+            if data['schedule']:
+                all_jobs.update(task[0] for task in data['schedule'])
+        all_jobs = sorted(list(all_jobs))
+        
+        # Use seaborn husl color palette for consistency
+        colors = sns.color_palette("husl", n_colors=len(all_jobs))
+        job_colors = {job: colors[i % len(colors)] for i, job in enumerate(all_jobs)}
 
         for idx, (agent_name, data) in enumerate(gantt_data.items()):
             schedule = data['schedule']
@@ -703,16 +707,11 @@ class AdvancedJSSVisualizer:
             if not schedule:
                 ax.text(0.5, 0.5, f'No schedule data for {agent_name}',
                         ha='center', va='center', transform=ax.transAxes, fontsize=12)
-                ax.set_title(f'{agent_name} - No Data', fontweight='bold')
+                ax.set_title(f'{agent_name} - No Data')
                 continue
 
-            # Get unique machines and jobs
+            # Get unique machines for this agent
             machines = sorted(list(set(task[1] for task in schedule)))
-            jobs = sorted(list(set(task[0] for task in schedule)))
-
-            # Create consistent color map for jobs across all charts
-            colors = plt.cm.Set3(np.linspace(0, 1, max(10, len(jobs))))
-            job_colors = {job: colors[job % len(colors)] for job in jobs}
 
             # Plot tasks
             for task in schedule:
@@ -720,50 +719,37 @@ class AdvancedJSSVisualizer:
                 duration = end_time - start_time
                 machine_idx = machines.index(machine_id)
 
-                # Plot task bar
-                ax.barh(machine_idx, duration, left=start_time, height=0.6,
+                # Plot task bar with ControllerJSSAgent styling
+                ax.barh(machine_idx, duration, left=start_time, height=0.4,
                         color=job_colors[job_id],
-                        edgecolor='black', alpha=0.8, linewidth=0.5)
+                        edgecolor='black', alpha=0.8)
 
-                # Add job label on the bar if it's wide enough
-                if duration > makespan * 0.02:
-                    ax.text(start_time + duration/2, machine_idx, f'J{job_id}',
-                            ha='center', va='center', fontweight='bold', fontsize=8)
-
-            # Customize subplot
+            # Customize subplot to match ControllerJSSAgent style
             ax.set_yticks(range(len(machines)))
-            ax.set_yticklabels([f'M{m}' for m in machines])
-            ax.set_ylabel('Machines', fontweight='bold')
-            ax.set_title(
-                f'{agent_name} (Makespan: {makespan:.1f})', fontweight='bold')
-            ax.grid(True, alpha=0.3, axis='x')
+            ax.set_yticklabels([f'Machine {m}' for m in machines])
+            ax.set_ylabel('Machines')
+            ax.set_title(f'{agent_name} - Makespan: {makespan:.1f}')
+            ax.grid(True, alpha=0.3)
 
             # Set consistent x-axis limits for comparison
             max_makespan = max(data['makespan']
                                for data in gantt_data.values())
             ax.set_xlim(0, max_makespan * 1.05)
 
-            # Add legend only to the last subplot
+            # Add legend only to the last subplot using mpatches
             if idx == len(gantt_data) - 1:
-                legend_elements = [plt.Rectangle((0, 0), 1, 1, facecolor=job_colors[job],
-                                                 edgecolor='black', label=f'Job {job}')
-                                   # Limit for readability
-                                   for job in sorted(jobs)[:8]]
-                if len(jobs) > 8:
-                    legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor='gray',
-                                                         edgecolor='black', label='...'))
-
-                ax.legend(handles=legend_elements, bbox_to_anchor=(1.05, 1), loc='upper left',
-                          fontsize=9, title='Jobs')
+                job_patches = [mpatches.Patch(color=job_colors[job],
+                                              label=f'Job {job}') for job in sorted(all_jobs)]
+                ax.legend(handles=job_patches, bbox_to_anchor=(1.05, 1), loc='upper left')
 
         # Add common x-label to the bottom subplot
-        axes[-1].set_xlabel('Time', fontweight='bold', fontsize=12)
+        axes[-1].set_xlabel('Time')
 
         plt.tight_layout()
 
         # Save the comparison chart
         filepath = Path(save_dir) / "custom_agents_gantt_comparison.png"
-        plt.savefig(filepath, dpi=300, bbox_inches='tight', facecolor='white')
+        plt.savefig(filepath, dpi=300, bbox_inches='tight')
         plt.close()
 
         print(f"📊 Comparison Gantt chart saved to {filepath}")
