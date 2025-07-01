@@ -4,8 +4,7 @@ Controller JSS Agent Implementation
 
 import numpy as np
 import gymnasium as gym
-from typing import Dict, List, Tuple, Any
-from JSSEnv.envs.jss_env import JssEnv
+from typing import Dict, List, Tuple
 
 class ControllerJSSAgent:
     """JSS Agent that respects controller constraints for people-machine assignments"""
@@ -179,7 +178,7 @@ class ControllerJSSAgent:
                 except ValueError as e:
                     # Handle jobs with no qualified people - this is a critical issue
                     print(f"Critical Warning: {e} for job {i}, machine {machine_id}")
-                    print(f"Controller configuration may be incomplete!")
+                    print("Controller configuration may be incomplete!")
                     
                     # Check if there are ANY people qualified for this machine
                     qualified_people = [pid for pid, machines in self.controller.items() 
@@ -348,7 +347,6 @@ class ControllerJSSAgent:
         current_op = job_info['current_op']
         machine_id = job_info['machine_id']
         start_time = job_info['start_time']
-        end_time = job_info['end_time']
         proc_time = env.instance_matrix[job_idx][current_op][1]
 
         # SPT score (Shortest Processing Time) - higher score for shorter tasks

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import matplotlib.patches as mpatches
@@ -24,10 +24,10 @@ class AdvancedJSSVisualizer:
         # Set style with proper seaborn version handling
         try:
             plt.style.use('seaborn-v0_8-whitegrid')
-        except:
+        except Exception:
             try:
                 plt.style.use('seaborn-whitegrid')
-            except:
+            except Exception:
                 plt.style.use('default')
 
         sns.set_palette("husl")
@@ -506,17 +506,17 @@ class AdvancedJSSVisualizer:
         # Create box plot with version compatibility
         try:
             # For newer seaborn versions
-            box_plot = sns.boxplot(data=df, x='Method', y='Makespan', ax=ax,
+            sns.boxplot(data=df, x='Method', y='Makespan', ax=ax,
                                    hue='Method', palette=[self.colors.get(m, '#696969') for m in df['Method'].unique()],
                                    legend=False)
         except Exception:
             try:
                 # For older seaborn versions
-                box_plot = sns.boxplot(data=df, x='Method', y='Makespan', ax=ax,
+                sns.boxplot(data=df, x='Method', y='Makespan', ax=ax,
                                        palette=[self.colors.get(m, '#696969') for m in df['Method'].unique()])
             except Exception:
                 # Ultimate fallback
-                box_plot = sns.boxplot(
+                sns.boxplot(
                     data=df, x='Method', y='Makespan', ax=ax)
 
         # Highlight custom agents with error handling
@@ -598,7 +598,6 @@ class AdvancedJSSVisualizer:
 
     def create_gantt_charts_for_agents(self, gantt_data: Dict, save_dir: str = "results"):
         """Create Gantt charts for custom agents"""
-        import os
         from pathlib import Path
 
         # Create gantt charts directory

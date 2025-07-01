@@ -28,13 +28,17 @@ def main():
     args = parser.parse_args()
 
     # Configuration using parsed arguments
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    instances_root = os.path.join(root_dir, "instances")
+    controllers_root = os.path.join(root_dir, "controllers")
+
     instance_name = args.instance
-    instance_path = "instances/" + instance_name
+    instance_path = os.path.join(instances_root, instance_name)
     controller_name = args.controller
-    controller_path = "controllers/" + controller_name + ".txt"
+    controller_path = os.path.join(controllers_root, controller_name + ".txt")
     num_people = args.num_people
-    result_path = "results/" + instance_name + "_" + \
-        controller_name + time.strftime("_%Y%m%d_%H%M%S") + "/"
+    result_path = os.path.join(root_dir, "results", instance_name + "_" +
+                              controller_name + time.strftime("_%Y%m%d_%H%M%S") + "/")
 
     # Create result directory
     Path(result_path).mkdir(exist_ok=True)
@@ -47,7 +51,7 @@ def main():
     makespan, total_reward, schedule = agent.run_episode()
 
     # Print results
-    print(f"\nResults:")
+    print("\nResults:")
     print(f"Makespan: {makespan:.2f}")
     print(f"Total Reward: {total_reward:.2f}")
 

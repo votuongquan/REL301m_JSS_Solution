@@ -1,13 +1,10 @@
 import time
-import JSSEnv
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import gymnasium as gym
 from pathlib import Path
-import matplotlib.pyplot as plt
-from agents import BaseJSSAgent, create_agent
-from typing import Dict, List, Tuple, Any, Callable
+from agents import BaseJSSAgent
+from typing import Dict, List, Tuple, Callable
 from advanced_visualizer import AdvancedJSSVisualizer
 
 

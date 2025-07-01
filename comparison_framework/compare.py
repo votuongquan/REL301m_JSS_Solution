@@ -26,10 +26,12 @@ def main():
     args = parser.parse_args()
 
     instance_name = args.instance
-    instance_path = "instances/" + instance_name
+    # Get root directory of the project
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    instances_root = os.path.join(root_dir, "instances")
+    instance_path = os.path.join(instances_root, instance_name)
     num_episodes = args.episodes
-    result_path = "results/" + instance_name + \
-        time.strftime("_%Y%m%d_%H%M%S") + "/"
+    result_path = os.path.join(root_dir, "results", instance_name + time.strftime("_%Y%m%d_%H%M%S") + "/")
 
     if not os.path.exists(result_path):
         os.makedirs(result_path)
@@ -52,7 +54,7 @@ def main():
     try:
         test_env = framework.env_manager.create_environment()
         test_obs = test_env.reset()
-        print(f"✅ Environment created successfully!")
+        print("✅ Environment created successfully!")
 
         # Test agent
         test_agent = agents[0]
@@ -66,15 +68,15 @@ def main():
         return
 
     # Run comprehensive comparison
-    print(f"\n🏁 Running comprehensive comparison...")
+    print("\n🏁 Running comprehensive comparison...")
 
     try:
         results_df = framework.run_comprehensive_comparison(
             agents, num_episodes)
         # # Display results
-        # print("\n📊 COMPARISON RESULTS:")
-        # print("="*80)
-        # print(results_df.to_string(index=False, float_format='%.2f'))
+        print("\n📊 COMPARISON RESULTS:")
+        print("="*80)
+        print(results_df.to_string(index=False, float_format='%.2f'))
 
         # Print detailed summary
         framework.print_summary()
