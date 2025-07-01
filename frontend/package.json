@@ -1,14 +1,12 @@
 {
-  "name": "enterviu-frontend",
+  "name": "jssenv-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "lint": "next lint"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.6.1",
@@ -19,8 +17,6 @@
     "@radix-ui/react-dropdown-menu": "^2.1.15",
     "@radix-ui/react-slot": "^1.2.3",
     "@reduxjs/toolkit": "^2.8.2",
-    "@stagewise-plugins/react": "^0.4.9",
-    "@stagewise/toolbar-next": "^0.4.9",
     "@types/react-syntax-highlighter": "^15.5.13",
     "antd": "^5.25.3",
     "axios": "^1.9.0",
@@ -50,16 +46,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@storybook/addon-essentials": "^8.4.7",
-    "@storybook/addon-interactions": "^8.4.7",
-    "@storybook/addon-links": "^8.4.7",
-    "@storybook/addon-onboarding": "^8.4.7",
-    "@storybook/addon-themes": "^8.4.7",
-    "@storybook/blocks": "^8.4.7",
-    "@storybook/nextjs": "^8.4.7",
-    "@storybook/react": "^8.4.7",
-    "@storybook/test": "^8.4.7",
-    "@tailwindcss/postcss": "^4.1.7",
+      "@tailwindcss/postcss": "^4.1.7",
     "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.6",
     "@types/negotiator": "^0.6.3",
@@ -68,7 +55,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "storybook": "^8.4.7",
     "tailwindcss": "^4.1.7",
     "typescript": "^5"
   }

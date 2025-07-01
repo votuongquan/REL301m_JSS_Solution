@@ -4,7 +4,7 @@
  */
 
 import axiosInstance from './axiosInstance';
-import { handleApiCall, handleDirectApiCall } from '@/utils/apiHandler';
+import { handleDirectApiCall } from '@/utils/apiHandler';
 import type {
   HealthResponse,
   InstanceInfo,
@@ -19,7 +19,6 @@ import type {
   BackgroundTaskResponse,
   FileListResponse,
 } from '@/types/jss.type';
-import type { CommonResponse } from '@/types/common.type';
 
 /**
  * JSS API endpoints

@@ -1,150 +1,159 @@
-import { getCurrentLocale } from "@/utils/getCurrentLocale"
-import { getDictionary, createTranslator } from "@/utils/translation"
-import React from "react"
+/**
+ * JSS Operations Page - Server Component
+ * Demonstrates proper server-side rendering with JSS streaming components
+ * Following frontend rules for server components and translation
+ */
 
+import { getDictionary, createTranslator } from '@/utils/translation';
+import { getCurrentLocale } from '@/utils/getCurrentLocale';
+import JssDashboard from '@/components/jss/jss-dashboard';
+import BackgroundTaskManager from '@/components/jss/background-task-manager';
+import JssFileManager from '@/components/jss/jss-file-manager';
+import JssVisualization from '@/components/jss/jss-visualization';
 
-import { Metadata } from "next";
-export const metadata: Metadata = {
-  title: {
-    default: "EnterViu",
-    template: "%s | EnterViu"
-  },
-  description: "EnterViu - Professional Career Platform. Build your profile, discover job opportunities, and connect with employers through our intelligent job matching system.",
-  keywords: [
-    "EnterViu", 
-    "Job Search", 
-    "Career", 
-    "Profile Building", 
-    "Employment", 
-    "Job Matching", 
-    "Professional", 
-    "Resume", 
-    "Career Development", 
-    "Job Board", 
-    "Recruitment", 
-    "Next.js", 
-    "React", 
-    "TypeScript", 
-    "i18n", 
-    "Internationalization", 
-    "Dark Mode",
-    "Career Platform",
-    "Job Portal",
-    "Professional Network"
-  ],
-  authors: [
-    { name: "EnterViu Team", url: "https://enterviu.com" },
-    { name: "Career Development Team" }
-  ],
-  creator: "EnterViu - Professional Career Platform",
-  publisher: "EnterViu Organization",
-  applicationName: "EnterViu Platform",
-  generator: "Next.js",
-  referrer: "origin-when-cross-origin",
-  category: "Education",
-  classification: "Educational Platform",  metadataBase: new URL("https://enterviu.com"),
-  alternates: {
-    canonical: "/",
-    languages: {
-      "vi-VN": "/vi",
-      "en-US": "/en",
-    },
-  },
-  icons: {
-    icon: [
-      { url: "/assets/logo/logo_web.jpg", sizes: "32x32", type: "image/png" },
-      { url: "/assets/logo/logo_web.jpg", sizes: "16x16", type: "image/png" },
-    ],
-    apple: [
-      { url: "/assets/logo/logo_web.jpg", sizes: "180x180", type: "image/png" },
-    ],
-    shortcut: "/assets/logo/logo_web.jpg",
-  },
-  manifest: "/manifest.json",
-  openGraph: {
-    type: "website",
-    locale: "vi_VN",
-    alternateLocale: ["en_US"],
-    url: "https://enterviu.com",
-    title: "EnterViu - Professional Career Platform",
-    description: "Join EnterViu community to build your professional profile, discover job opportunities, and connect with top employers through intelligent matching.",
-    siteName: "EnterViu Platform",
-    images: [
-      {
-        url: "/assets/logo/logo_web.jpg",
-        width: 1200,
-        height: 630,
-        alt: "EnterViu Logo - Professional Career Platform",
-      },
-    ],
-    countryName: "Vietnam",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@enterviu_official",
-    creator: "@enterviu_official",
-    title: "EnterViu - Professional Career Platform",
-    description: "Join EnterViu community to build your professional profile, discover job opportunities, and connect with top employers through intelligent matching.",
-    images: ["/assets/logo/logo_web.jpg"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    nocache: false,
-    googleBot: {
-      index: true,
-      follow: true,
-      noimageindex: false,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  verification: {
-    google: "your-google-site-verification-code",
-    yandex: "your-yandex-verification-code",
-    yahoo: "your-yahoo-verification-code",
-  },  other: {
-    "mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-status-bar-style": "default",
-    "apple-mobile-web-app-title": "EnterViu",
-    "application-name": "EnterViu Platform",
-    "msapplication-TileColor": "#3b82f6",
-    "msapplication-TileImage": "/assets/logo/logo_web.jpg",
-    "theme-color": "#3b82f6",
-  },
-};
-async function Home() {
+// Server component - no 'use client' directive
+async function JssOperationsPage() {
+  // Server-side translation setup
   const locale = await getCurrentLocale();
   const dictionary = await getDictionary(locale);
   const t = createTranslator(dictionary);
-
-
-  // Placeholder features data
-  const featuresData: { title: string }[] = []; // Replace with your static or fetched data
+  // Get translations for components
+  const translations = {
+    pageTitle: t('jss.page.title') || 'JSS Operations',
+    pageSubtitle: t('jss.page.subtitle') || 'Real-time Job Shop Scheduling Analysis and Comparison',
+    dashboardTitle: t('jss.dashboard.title') || 'JSS Streaming Dashboard',
+    dashboardSubtitle: t('jss.dashboard.subtitle') || 'Run and compare JSS algorithms with real-time updates',
+    backgroundTitle: t('jss.background.title') || 'Streaming Sessions',
+    fileManagerTitle: t('jss.files.title') || 'File Manager',
+    visualizationTitle: t('jss.visualization.title') || 'Visualization Generator',
+  };
 
   return (
-    <>
-      <div>
-        <h1>{t('home.title', { defaultValue: 'Welcome to EnterViu' })}</h1>
-        <p>
-          {t('home.description')},
-        </p>
-        {/* Example static sections */}
-        <section>
-          <h2>Features</h2>
-          <ul>
-            {featuresData.map((feature, idx) => (
-              <li key={idx}>{feature.title}</li>
-            ))}
-          </ul>
+    <div className="min-h-screen bg-[color:var(--background)]">
+      {/* Page Header */}
+      <div className="bg-[color:var(--card)] border-b border-[color:var(--border)]">
+        <div className="container mx-auto px-6 py-8">
+          <h1 className="text-4xl font-bold text-[color:var(--foreground)] mb-2">
+            {translations.pageTitle}
+          </h1>
+          <p className="text-lg text-[color:var(--muted-foreground)]">
+            {translations.pageSubtitle}
+          </p>
+        </div>
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="bg-[color:var(--background)] border-b border-[color:var(--border)]">
+        <div className="container mx-auto px-6">
+          <nav className="flex space-x-8">
+            <a
+              href="#dashboard"
+              className="py-4 px-2 border-b-2 border-blue-600 text-blue-600 font-medium"
+            >
+              {t('jss.nav.dashboard') || 'Dashboard'}
+            </a>            <a
+              href="#background"
+              className="py-4 px-2 border-b-2 border-transparent text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] hover:border-gray-300"
+            >
+              {t('jss.nav.background') || 'Streaming Sessions'}
+            </a>
+            <a
+              href="#files"
+              className="py-4 px-2 border-b-2 border-transparent text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] hover:border-gray-300"
+            >
+              {t('jss.nav.files') || 'Files'}
+            </a>
+            <a
+              href="#visualization"
+              className="py-4 px-2 border-b-2 border-transparent text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] hover:border-gray-300"
+            >
+              {t('jss.nav.visualization') || 'Visualizations'}
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto">
+        {/* Dashboard Section */}
+        <section id="dashboard" className="py-8">
+          <JssDashboard
+            title={translations.dashboardTitle}
+            subtitle={translations.dashboardSubtitle}
+          />
+        </section>        {/* Background Tasks Section */}
+        <section id="background" className="py-8 border-t border-[color:var(--border)]">
+          <BackgroundTaskManager
+            title={translations.backgroundTitle}
+          />
         </section>
-        <section>
+
+        {/* File Manager Section */}
+        <section id="files" className="py-8 border-t border-[color:var(--border)]">
+          <JssFileManager
+            title={translations.fileManagerTitle}
+          />
+        </section>
+
+        {/* Visualization Section */}
+        <section id="visualization" className="py-8 border-t border-[color:var(--border)]">
+          <JssVisualization
+            title={translations.visualizationTitle}
+          />
         </section>
       </div>
-    </>
+
+      {/* Features Overview */}
+      <div className="bg-[color:var(--muted)] py-16 mt-16">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            {t('jss.features.title') || 'JSS Features'}
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-[color:var(--feature-blue)] text-[color:var(--feature-blue-text)] rounded-lg p-6 text-center">
+              <div className="text-4xl mb-4">🔄</div>
+              <h3 className="text-xl font-semibold mb-2">
+                {t('jss.features.comparison.title') || 'Algorithm Comparison'}
+              </h3>
+              <p className="text-sm">
+                {t('jss.features.comparison.description') || 'Compare multiple JSS algorithms and dispatching rules'}
+              </p>
+            </div>
+              <div className="bg-[color:var(--feature-green)] text-[color:var(--feature-green-text)] rounded-lg p-6 text-center">
+              <div className="text-4xl mb-4">🌊</div>
+              <h3 className="text-xl font-semibold mb-2">
+                {t('jss.features.streaming.title') || 'Real-time Streaming'}
+              </h3>
+              <p className="text-sm">
+                {t('jss.features.streaming.description') || 'Stream live comparison results and progress updates'}
+              </p>
+            </div>
+            
+            <div className="bg-[color:var(--feature-purple)] text-[color:var(--feature-purple-text)] rounded-lg p-6 text-center">
+              <div className="text-4xl mb-4">📊</div>
+              <h3 className="text-xl font-semibold mb-2">
+                {t('jss.features.visualization.title') || 'Rich Visualizations'}
+              </h3>
+              <p className="text-sm">
+                {t('jss.features.visualization.description') || 'Generate comprehensive charts and reports'}
+              </p>
+            </div>
+            
+            <div className="bg-[color:var(--feature-orange)] text-[color:var(--feature-orange-text)] rounded-lg p-6 text-center">
+              <div className="text-4xl mb-4">🎯</div>
+              <h3 className="text-xl font-semibold mb-2">
+                {t('jss.features.optimization.title') || 'Performance Optimization'}
+              </h3>
+              <p className="text-sm">
+                {t('jss.features.optimization.description') || 'Find the best scheduling approach'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
-export default Home;
+export default JssOperationsPage;

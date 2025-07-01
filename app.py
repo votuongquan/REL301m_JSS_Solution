@@ -12,6 +12,7 @@ import uvicorn
 # Import routes
 from api.routes.jss_routes import router as jss_router, init_services
 from api.routes.file_routes import router as file_router
+from api.stream.stream_routes import router as stream_router, init_streaming_service
 
 # Get project root directory
 PROJECT_ROOT = Path(__file__).parent
@@ -40,6 +41,7 @@ app.add_middleware(
 # Include routers
 app.include_router(jss_router)
 app.include_router(file_router)
+app.include_router(stream_router)
 
 # Serve static files (results, visualizations)
 RESULTS_DIR.mkdir(exist_ok=True)
@@ -56,11 +58,16 @@ async def startup_event():
 
 	# Initialize services with results directory
 	init_services(str(INSTANCES_DIR), str(CONTROLLERS_DIR), str(RESULTS_DIR))
+	
+	# Initialize streaming service
+	from api.routes.jss_routes import get_file_service
+	init_streaming_service(get_file_service())
 
 	print('🚀 JSS API started!')
 	print(f'📁 Instances directory: {INSTANCES_DIR}')
 	print(f'🎛️  Controllers directory: {CONTROLLERS_DIR}')
 	print(f'📊 Results directory: {RESULTS_DIR}')
+	print('🌊 Streaming service initialized!')
 
 
 @app.get('/', response_class=HTMLResponse)
@@ -105,8 +112,7 @@ async def root():
                     <span class="method">GET</span> <span class="path">/api/v1/controllers</span><br>
                     Get list of available controllers (with optional detailed stats)
                 </div>
-                
-                <div class="endpoint">
+                  <div class="endpoint">
                     <span class="method">POST</span> <span class="path">/api/v1/compare</span><br>
                     Run comprehensive comparison of JSS methods (synchronous)
                 </div>
@@ -114,6 +120,21 @@ async def root():
                 <div class="endpoint">
                     <span class="method">POST</span> <span class="path">/api/v1/compare/background</span><br>
                     Run comprehensive comparison in background with task tracking
+                </div>
+                
+                <div class="endpoint">
+                    <span class="method">WebSocket</span> <span class="path">/api/v1/stream/ws</span><br>
+                    Real-time streaming WebSocket endpoint for live JSS results
+                </div>
+                
+                <div class="endpoint">
+                    <span class="method">POST</span> <span class="path">/api/v1/stream/start</span><br>
+                    Start a new streaming comparison with real-time updates
+                </div>
+                
+                <div class="endpoint">
+                    <span class="method">GET</span> <span class="path">/api/v1/stream/sessions</span><br>
+                    Get all streaming sessions and their status
                 </div>
                 
                 <div class="endpoint">
@@ -160,13 +181,14 @@ async def root():
                     <li><strong>controller</strong> - Controller-constrained Agent</li>
                 </ul>
             </div>
-            
-            <div class="section">
+              <div class="section">
                 <h2>📊 Features</h2>
                 <ul>
                     <li>Multiple JSS algorithm comparison</li>
                     <li>Custom agent implementations (Hybrid, LookAhead, Controller-constrained)</li>
                     <li>Background task processing with progress tracking</li>
+                    <li><strong>🌊 Real-time streaming with WebSocket support</strong></li>
+                    <li>Live episode-by-episode progress updates</li>
                     <li>Detailed instance and controller statistics</li>
                     <li>Automatic visualization generation (dashboards, Gantt charts)</li>
                     <li>File management and download capabilities</li>
@@ -175,12 +197,14 @@ async def root():
                     <li>Health monitoring with system statistics</li>
                 </ul>
             </div>
-            
-            <div class="section">
+              <div class="section">
                 <h2>🚀 Quick Start</h2>
                 <p>1. View available instances: <code>GET /api/v1/instances</code></p>
                 <p>2. Run a quick comparison: <code>POST /api/v1/compare</code></p>
-                <p>3. Check the <a href="/docs">interactive documentation</a> for detailed API usage</p>
+                <p>3. Start streaming comparison: <code>POST /api/v1/stream/start</code></p>
+                <p>4. Connect to WebSocket: <code>ws://localhost:8000/api/v1/stream/ws</code></p>
+                <p>5. Check the <a href="/docs">interactive documentation</a> for detailed API usage</p>
+                <p>6. View streaming example: <a href="/api/v1/stream/example-client">JavaScript client example</a></p>
             </div>
         </div>
     </body>

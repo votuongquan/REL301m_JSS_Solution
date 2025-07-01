@@ -1,6 +1,7 @@
 /**
  * JSS Visualization Component
  * Demonstrates proper visualization generation with JSS API
+ * Compatible with both traditional and streaming JSS results
  */
 
 'use client';
@@ -10,8 +11,6 @@ import { jssAPI } from '@/apis/jss-api';
 import { getErrorMessage } from '@/utils/apiHandler';
 import type {
   VisualizationRequest,
-  VisualizationResponse,
-  BackgroundTaskStatus,
   InstanceInfo,
 } from '@/types/jss.type';
 
@@ -22,7 +21,6 @@ interface JssVisualizationProps {
 function JssVisualization({ title }: JssVisualizationProps) {
   // State management
   const [instances, setInstances] = useState<InstanceInfo[]>([]);
-  const [recentTasks, setRecentTasks] = useState<BackgroundTaskStatus[]>([]);
   const [selectedInstance, setSelectedInstance] = useState<string>('');
   const [selectedResultId, setSelectedResultId] = useState<string>('');
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['dashboard', 'detailed', 'gantt']);
@@ -47,7 +45,6 @@ function JssVisualization({ title }: JssVisualizationProps) {
     { id: 'pdf', label: 'PDF Document', description: 'Printable document' },
     { id: 'html', label: 'HTML Interactive', description: 'Interactive web page' },
   ];
-
   // Load initial data
   useEffect(() => {
     loadInitialData();
@@ -55,25 +52,11 @@ function JssVisualization({ title }: JssVisualizationProps) {
 
   const loadInitialData = async () => {
     try {
-      const [instancesData, tasksData] = await Promise.all([
-        jssAPI.getInstances(false),
-        jssAPI.getAllTasks(),
-      ]);
-
+      const instancesData = await jssAPI.getInstances(false);
       setInstances(instancesData || []);
-      
-      // Filter for completed tasks that might have results
-      const completedTasks = (tasksData || []).filter(
-        task => task.status === 'completed' && task.result
-      );
-      setRecentTasks(completedTasks);
 
       if (instancesData && instancesData.length > 0) {
         setSelectedInstance(instancesData[0].name);
-      }
-
-      if (completedTasks.length > 0) {
-        setSelectedResultId(completedTasks[0].task_id);
       }
     } catch (err) {
       setError(`Failed to load data: ${getErrorMessage(err)}`);
@@ -190,25 +173,21 @@ function JssVisualization({ title }: JssVisualizationProps) {
                   </option>
                 ))}
               </select>
-            </div>
-
-            <div>
+            </div>            <div>
               <label className="block text-sm font-medium mb-2">
-                Comparison Result *
+                Result ID *
               </label>
-              <select
+              <input
+                type="text"
                 value={selectedResultId}
                 onChange={(e) => setSelectedResultId(e.target.value)}
+                placeholder="Enter result/session ID"
                 className="w-full p-2 border border-[color:var(--border)] rounded-md bg-[color:var(--background)]"
                 disabled={loading}
-              >
-                <option value="">Select a result...</option>
-                {recentTasks.map((task) => (
-                  <option key={task.task_id} value={task.task_id}>
-                    {task.task_id} ({new Date(task.created_at).toLocaleDateString()})
-                  </option>
-                ))}
-              </select>
+              />
+              <div className="text-xs text-[color:var(--muted-foreground)] mt-1">
+                Enter a session ID from streaming comparisons or task ID from background tasks
+              </div>
             </div>
 
             <div>

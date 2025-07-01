@@ -1,6 +1,7 @@
 /**
  * JSS File Manager Component
  * Demonstrates proper file management with JSS API
+ * Compatible with both traditional and streaming JSS results
  */
 
 'use client';
@@ -8,7 +9,6 @@
 import { useState, useEffect } from 'react';
 import { jssAPI } from '@/apis/jss-api';
 import { getErrorMessage } from '@/utils/apiHandler';
-import type { FileListResponse } from '@/types/jss.type';
 
 interface JssFileManagerProps {
   title: string;

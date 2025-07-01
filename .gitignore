@@ -29,3 +29,6 @@ wheels/
 
 # Results and output files
 results/
+.vscode/
+yarn.lock
+package-lock.json
