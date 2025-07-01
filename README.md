@@ -29,7 +29,7 @@ This repository contains an advanced **Job Shop Scheduling (JSS)** solution fram
 
 ## 🏗️ Project Structure
 
-```
+```text
 REL301m_JSS_Solution/
 ├── main.py                      # Controller-constrained JSS execution
 ├── requirements.txt             # Dependencies
@@ -202,7 +202,7 @@ The framework provides:
 
 JSS instances follow standard format:
 
-```
+```text
 [num_jobs] [num_machines]
 [job_0_operations: machine_id processing_time ...]
 [job_1_operations: machine_id processing_time ...]
@@ -213,7 +213,7 @@ JSS instances follow standard format:
 
 Controller files define people-machine assignments:
 
-```
+```text
 person_id machine_id_1 machine_id_2 ...
 person_id machine_id_1 machine_id_2 ...
 ...
@@ -254,7 +254,7 @@ The ControllerJSSAgent now automatically generates a detailed `report.txt` file 
 
 Example report sections:
 
-```
+```text
 🎯 PERFORMANCE SUMMARY
 Makespan: 245.50 time units
 Overall Efficiency: 78.45%
