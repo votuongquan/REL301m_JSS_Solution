@@ -13,15 +13,15 @@ from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisco
 from fastapi.responses import JSONResponse
 
 from api.routes.jss_routes import get_file_service
-from api.services.jss_service import JSSFileService
-from api.stream.stream_schemas import (
+from api.schemas.stream_schemas import (
     ClientMessage,
     HealthCheck,
     StreamComparisonRequest,
     StreamSessionInfo,
     StreamStats,
 )
-from api.stream.stream_service import JSSStreamingService
+from api.services.jss_service import JSSFileService
+from api.services.stream_service import JSSStreamingService
 from comparison_framework.stream.stream_manager import stream_manager
 
 logger = logging.getLogger(__name__)

@@ -77,6 +77,7 @@ function JssDashboard({ title, subtitle }: JssDashboardProps) {
         clientRef.current.disconnect();
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initializeStreamingClient = useCallback(() => {
@@ -178,6 +179,7 @@ function JssDashboard({ title, subtitle }: JssDashboardProps) {
       console.error('Failed to initialize streaming client:', err);
       setError('Failed to initialize streaming connection');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadDashboardData = async () => {

@@ -14,7 +14,7 @@ from typing import Dict, List, Optional
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from api.services.jss_service import JSSFileService
-from api.stream.stream_schemas import (
+from api.schemas.stream_schemas import (
     StreamAgentType,
     StreamComparisonRequest,
     StreamDispatchingRule,

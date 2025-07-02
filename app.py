@@ -12,7 +12,7 @@ import uvicorn
 # Import routes
 from api.routes.jss_routes import router as jss_router, init_services
 from api.routes.file_routes import router as file_router
-from api.stream.stream_routes import router as stream_router, init_streaming_service
+from api.routes.stream_routes import router as stream_router, init_streaming_service
 
 # Get project root directory
 PROJECT_ROOT = Path(__file__).parent
