@@ -5,7 +5,7 @@ import warnings
 from pathlib import Path
 
 from controller_agent import ControllerJSSAgent
-from utils import create_gantt_chart, save_schedule_to_csv
+from utils import create_gantt_chart, save_schedule_to_json
 
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -63,7 +63,7 @@ def main():
 	create_gantt_chart(schedule, f'{result_path}gantt_chart.png')
 
 	# Save detailed schedule
-	save_schedule_to_csv(schedule, f'{result_path}schedule.csv')
+	save_schedule_to_json(schedule, f'{result_path}schedule.json')
 	# Generate comprehensive performance report
 	agent.generate_report(makespan, total_reward, schedule, result_path, instance_path, controller_path)
 	print(f'Results saved to {result_path}')

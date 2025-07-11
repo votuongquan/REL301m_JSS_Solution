@@ -21,6 +21,7 @@ var/
 wheels/
 
 *.csv
+*.json
 *.tsv
 *.log
 *.png 
