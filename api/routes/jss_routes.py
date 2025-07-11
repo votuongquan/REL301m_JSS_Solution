@@ -73,7 +73,11 @@ async def health_check(fs: JSSFileService = Depends(get_file_service)):
 	instances_count = len(fs.get_instances())
 	controllers_count = len(fs.get_controllers())
 
-	api_log(f'✅ System healthy: {instances_count} instances, {controllers_count} controllers', APIColors.GREEN, 'HEALTH')
+	api_log(
+		f'✅ System healthy: {instances_count} instances, {controllers_count} controllers',
+		APIColors.GREEN,
+		'HEALTH',
+	)
 	return HealthResponse(
 		status='healthy',
 		version='1.0.0',
@@ -118,10 +122,21 @@ async def get_controllers(
 @router.post('/compare', response_model=ComparisonResult)
 async def run_comparison(request: ComparisonRequest, es: JSSExecutionService = Depends(get_execution_service)):
 	"""Run comprehensive comparison of JSS methods"""
-	api_log(f'🚀 Starting comparison: {request.instance_name} with {len(request.agents)} agents', APIColors.MAGENTA, 'COMPARE')
+	api_log(
+		f'🎆 Starting background comparison: {request.instance_name}',
+		APIColors.MAGENTA,
+		'BG_COMPARE',
+	)
+	# DEBUG: Log incoming request parameters
+	print('DEBUG: Background comparison request received with parameters:')
+	print(request.dict())
 	try:
 		result = await es.run_comparison(request)
-		api_log(f'✅ Comparison completed: {result.best_method} won with {result.best_makespan}', APIColors.GREEN, 'COMPARE')
+		api_log(
+			f'✅ Comparison completed: {result.best_method} won with {result.best_makespan}',
+			APIColors.GREEN,
+			'COMPARE',
+		)
 		return result
 	except ValueError as e:
 		api_log(f'❌ Comparison validation error: {str(e)}', APIColors.RED, 'COMPARE')
@@ -134,16 +149,35 @@ async def run_comparison(request: ComparisonRequest, es: JSSExecutionService = D
 @router.post('/compare/background')
 async def run_comparison_background(request: ComparisonRequest, es: JSSExecutionService = Depends(get_execution_service)):
 	"""Run comprehensive comparison in background"""
-	api_log(f'🎆 Starting background comparison: {request.instance_name}', APIColors.MAGENTA, 'BG_COMPARE')
+	api_log(
+		f'🎆 Starting background comparison: {request.instance_name}',
+		APIColors.MAGENTA,
+		'BG_COMPARE',
+	)
+	# DEBUG: Log incoming request parameters
+	print('DEBUG: Background comparison request received with parameters:')
+	print(request.dict())
 	try:
 		task_id = await es.run_comparison_background(request)
-		api_log(f'✅ Background task created: {task_id[:8]}...', APIColors.GREEN, 'BG_COMPARE')
+		api_log(
+			f'✅ Background task created: {task_id[:8]}...',
+			APIColors.GREEN,
+			'BG_COMPARE',
+		)
 		return {'task_id': task_id, 'status': 'started'}
 	except ValueError as e:
-		api_log(f'❌ Background comparison validation error: {str(e)}', APIColors.RED, 'BG_COMPARE')
+		api_log(
+			f'❌ Background comparison validation error: {str(e)}',
+			APIColors.RED,
+			'BG_COMPARE',
+		)
 		raise HTTPException(status_code=400, detail=str(e))
 	except Exception as e:
-		api_log(f'❌ Failed to start background comparison: {str(e)}', APIColors.RED, 'BG_COMPARE')
+		api_log(
+			f'❌ Failed to start background comparison: {str(e)}',
+			APIColors.RED,
+			'BG_COMPARE',
+		)
 		raise HTTPException(status_code=500, detail=f'Failed to start comparison: {str(e)}')
 
 
@@ -206,10 +240,21 @@ async def download_file(file_path: str, es: JSSExecutionService = Depends(get_ex
 @router.post('/run', response_model=SingleRunResult)
 async def run_single_episode(request: SingleRunRequest, es: JSSExecutionService = Depends(get_execution_service)):
 	"""Run a single JSS episode"""
-	api_log(f'🎯 Running single episode: {request.instance_name} with {request.agent_type.value}', APIColors.BLUE, 'EPISODE')
+	api_log(
+		f'🎆 Starting background comparison: {request.instance_name}',
+		APIColors.MAGENTA,
+		'BG_COMPARE',
+	)
+	# Log debugging info
+	api_log('✉️ Received comparison request (DEBUG)', APIColors.CYAN)
+	api_log(f'📦 Request details: {request.dict()}', APIColors.YELLOW)
 	try:
 		result = await es.run_single_episode(request)
-		api_log(f'✅ Episode completed: makespan={result.makespan}, reward={result.total_reward}', APIColors.GREEN, 'EPISODE')
+		api_log(
+			f'✅ Episode completed: makespan={result.makespan}, reward={result.total_reward}',
+			APIColors.GREEN,
+			'EPISODE',
+		)
 		return result
 	except ValueError as e:
 		api_log(f'❌ Episode validation error: {str(e)}', APIColors.RED, 'EPISODE')

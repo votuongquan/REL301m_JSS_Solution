@@ -58,9 +58,10 @@ async def startup_event():
 
 	# Initialize services with results directory
 	init_services(str(INSTANCES_DIR), str(CONTROLLERS_DIR), str(RESULTS_DIR))
-	
+
 	# Initialize streaming service
 	from api.routes.jss_routes import get_file_service
+
 	init_streaming_service(get_file_service())
 
 	print('🚀 JSS API started!')
@@ -202,7 +203,7 @@ async def root():
                 <p>1. View available instances: <code>GET /api/v1/instances</code></p>
                 <p>2. Run a quick comparison: <code>POST /api/v1/compare</code></p>
                 <p>3. Start streaming comparison: <code>POST /api/v1/stream/start</code></p>
-                <p>4. Connect to WebSocket: <code>ws://localhost:8000/api/v1/stream/ws</code></p>
+                <p>4. Connect to WebSocket: <code>ws://localhost:8081/api/v1/stream/ws</code></p>
                 <p>5. Check the <a href="/docs">interactive documentation</a> for detailed API usage</p>
                 <p>6. View streaming example: <a href="/api/v1/stream/example-client">JavaScript client example</a></p>
             </div>

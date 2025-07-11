@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSS Streaming Test Client</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .section { margin-bottom: 20px; }
+        .header { font-size: 24px; margin-bottom: 10px; }
+        .status { font-weight: bold; }
+        .output { border: 1px solid #ccc; padding: 10px; background: #f9f9f9; }
+        .progress-bar { width: 100%; height: 20px; background: #e0e0e0; border-radius: 5px; margin-top: 10px; }
+        .progress { height: 100%; background: #4caf50; transition: width 0.2s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <div class="header">WebSocket Connection</div>
+            <div class="status" id="connection-status">Disconnected</div>
+        </div>
+
+        <div class="section">
+            <div class="header">Session Output</div>
+            <div class="output" id="session-output"></div>
+        </div>
+
+        <div class="section">
+            <div class="header">Progress</div>
+            <div class="progress-bar">
+                <div class="progress" id="progress-fill" style="width: 0;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const wsUrl = 'ws://localhost:8081/api/v1/stream/ws';
+        let websocket;
+
+        // UI elements
+        const connectionStatus = document.getElementById('connection-status');
+        const sessionOutput = document.getElementById('session-output');
+        const progressFill = document.getElementById('progress-fill');
+
+        function connectWebSocket() {
+            websocket = new WebSocket(wsUrl);
+
+            websocket.onopen = () => {
+                connectionStatus.textContent = 'Connected';
+                connectionStatus.style.color = 'green';
+                console.log('Connected to server');
+
+                // Automatically subscribe to a known session for testing
+                websocket.send(JSON.stringify({
+                    type: 'subscribe',
+                    session_id: 'test-session-123'  // Example session ID from backend
+                }));
+            };
+
+            websocket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+
+                console.log('Received message:', message);
+
+                if (message.type === 'connection_established') {
+                    // Handle connection established message
+                    connectionStatus.textContent = `Connected (Client ID: ${message.client_id})`;
+                    sessionOutput.textContent += `[${new Date().toLocaleTimeString()}] Connected - Client ID: ${message.client_id}\n\n`;
+                } else if (message.type === 'comparison_start') {
+                    sessionOutput.textContent += `[${new Date().toLocaleTimeString()}] Starting comparison: ${message.total_methods} methods\n`;
+                } else if (message.type === 'episode_progress') {
+                    const percentComplete = (message.step / message.total_steps) * 100;
+                    progressFill.style.width = `${percentComplete}%`;
+                    sessionOutput.textContent += `[${new Date().toLocaleTimeString()}] Episode: ${message.episode} - Step: ${message.step} (Makespan: ${message.makespan}) - Progress: ${Math.round(percentComplete)}%\n`;
+                } else if (message.type === 'method_complete') {
+                    sessionOutput.textContent += `[${new Date().toLocaleTimeString()}] Method complete - Agent: ${message.agent_name} (${message.makespan})\n`;
+                } else if (message.type === 'comparison_complete') {
+                    connectionStatus.textContent = 'Comparison complete!';
+                    sessionOutput.textContent += `[${new Date().toLocaleTimeString()}] Comparison complete! Best: ${message.best_method} (Makespan: ${message.best_makespan})\n`;
+                } else if (message.type === 'error') {
+                    console.error('Server error:', message.error);
+                    sessionOutput.textContent += `[${new Date().toLocaleTimeString()}] ERROR: ${message.error}\n`;
+                } else {
+                    sessionOutput.textContent += `[${new Date().toLocaleTimeString()}] Received unknown message type: ${message.type}\n`;
+                }
+            };
+
+            websocket.onclose = () => {
+                connectionStatus.textContent = 'Disconnected';
+                connectionStatus.style.color = 'red';
+                console.warn('Disconnected from server');
+                progressFill.style.width = '0%';
+            };
+
+            websocket.onerror = (err) => {
+                console.error('WebSocket error:', err);
+            };
+        }
+
+        // Handle page reloads
+        window.addEventListener('beforeunload', () => {
+            if (websocket) {
+                websocket.close();
+            }
+        });
+
+        // Initialize WebSocket connection
+        connectWebSocket();
+    </script>
+</body>
+</html>

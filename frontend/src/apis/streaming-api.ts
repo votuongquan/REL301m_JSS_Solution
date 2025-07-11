@@ -187,7 +187,7 @@ export class JSSStreamingClient {
   private reconnectInterval: number = 1000;
 
   constructor(
-    private baseUrl: string = 'ws://localhost:8000/api/v1/stream/ws'
+    private baseUrl: string = 'ws://localhost:8081/api/v1/stream/ws'
   ) {}
 
   /**
