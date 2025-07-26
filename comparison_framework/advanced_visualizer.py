@@ -249,6 +249,7 @@ class AdvancedJSSVisualizer:
 		labels = []
 
 		for method in self.results.keys():
+			print(self.results[method])
 			makespans = self.results[method]['all_makespans']
 			makespan_data.extend(makespans)
 			labels.extend([method] * len(makespans))
@@ -573,6 +574,7 @@ class AdvancedJSSVisualizer:
 	def _create_episode_performance(self, ax):
 		"""Create episode-by-episode performance chart"""
 		for method in self.results.keys():
+			print(self.results[method])
 			makespans = self.results[method]['all_makespans']
 			episodes = range(1, len(makespans) + 1)
 
@@ -603,6 +605,7 @@ class AdvancedJSSVisualizer:
 		labels = []
 
 		for method in self.results.keys():
+			print(self.results[method])
 			makespans = self.results[method]['all_makespans']
 			makespan_data.extend(makespans)
 			labels.extend([method] * len(makespans))
@@ -653,6 +656,7 @@ class AdvancedJSSVisualizer:
 	def _create_cumulative_performance(self, ax):
 		"""Create cumulative performance chart"""
 		for method in self.results.keys():
+			print(self.results[method])
 			makespans = self.results[method]['all_makespans']
 			cumulative_avg = np.cumsum(makespans) / np.arange(1, len(makespans) + 1)
 			episodes = range(1, len(makespans) + 1)
@@ -686,6 +690,7 @@ class AdvancedJSSVisualizer:
 		ci_upper = []
 
 		for method in methods:
+			print(self.results[method])
 			makespans = np.array(self.results[method]['all_makespans'])
 			mean = np.mean(makespans)
 			std_err = np.std(makespans) / np.sqrt(len(makespans))
